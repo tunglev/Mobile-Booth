@@ -1,29 +1,39 @@
-# Mobile-Booth-
-CS326 Team 15 Web Programming
+# Mobile Booth - Created by team 15
 
+A fun way to create memories and share them.
 
-# MobileBooth
-## Group 15
+## Project Description
+* Problem: Photo booths used to be a staple in malls and public areas before the iPhone, but are now rarely used. 
+* Solution: Our app is revitalizing this tradition, using the technology that killed the photo booth to save the photo booth!
 
-### Project Description
-* Problem: Clearly define the problem your application aims to solve.
-* Solution: Describe how your application addresses the problem.
-* Key Features: Outline essential functionalities of your application.
-* Why This Project? Explain the real-world impact and user pain points.
+* Key Features:
+  - Custom background: Leverage ML to allow the user to configure a custom background in all or some of their photos
+  - Sharing: Download photo, store in the cloud, or share with friends and family.
+  - Video: User can opt to have short videos taken instead of photos.
+  - Authentication: User authenticates using Google for human verification and photo access.
+  - Configuration: User has control over # of photos are taken, filters used, and the photo booth template
 
-### Team Members
-Name: Jack Hudson
+  
+* Why this project? Currently, building a photo album to commemorate a moment requires a physical photo booth, or you have to do it manually. MobileBooth users can conveniently do all of the steps in a single place. 
+
+## Team Members
+
+### Jack Hudson
 Role:
+
 Planned Issues:
 
-Name: Tung Viet Le
+### Tung Viet Le
 Role:
+
 Planned Issues:
 
-Name: Basim Majid
+### Basim Majid
 Role:
+
 Planned Issues:
 
-Name: Mihir Nagarkatti
+### Mihir Nagarkatti
 Role:
+
 Planned Issues:
