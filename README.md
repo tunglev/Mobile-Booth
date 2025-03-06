@@ -19,9 +19,14 @@ A fun way to create memories and share them.
 ## 🧑‍💻 Team Members
 
 ### Jack Hudson
-Role:
+Role: Timekeeper
+- Time box responsibilities given by Tung Le
+- Reiterate long-term and short-term goals to teammates
 
 Planned Issues:
+- Google authentication integration
+- User Storage configuration
+- Download/Share finalized photo booth collage
 
 ### Tung Viet Le
 Role: Project Manager
