@@ -3,8 +3,8 @@
 A fun way to create memories and share them.
 
 ## 🔥 Project Description
-* Problem: Photo booths used to be a staple in malls and public areas before the iPhone, but are now rarely used. 
-* Solution: Our app is revitalizing this tradition, using the technology that killed the photo booth to save the photo booth!
+* Problem: Remember when you and your friends never left the mall without a stop at the photo booth? It was a tradition—capturing memories in a strip of snapshots. But as smartphones took over, that ritual faded. The instant convenience of phone cameras replaced the charm of printed photo strips, making those nostalgic moments a thing of the past.
+* Solution: Our app is bringing that tradition back—using the very technology that replaced photo booths to revive them!
 
 * Key Features:
   - Custom background: Leverage ML to allow the user to configure a custom background in all or some of their photos
