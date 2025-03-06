@@ -8,7 +8,7 @@ A fun way to create memories and share them.
 
 * Key Features:
   - Custom background: Leverage ML to allow the user to configure a custom background in all or some of their photos
-  - Sharing: Download photo, store in the cloud, or share with friends and family.
+  - Sharing: Download photo, store in you own personal cloud, or share with friends and family.
   - Video: User can opt to have short videos taken instead of photos.
   - Authentication: User authenticates using Google for human verification and photo access.
   - Configuration: User has control over # of photos are taken, filters used, and the photo booth template
