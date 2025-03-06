@@ -2,7 +2,7 @@
 
 A fun way to create memories and share them.
 
-## Project Description
+## 🔥 Project Description
 * Problem: Photo booths used to be a staple in malls and public areas before the iPhone, but are now rarely used. 
 * Solution: Our app is revitalizing this tradition, using the technology that killed the photo booth to save the photo booth!
 
@@ -16,7 +16,7 @@ A fun way to create memories and share them.
   
 * Why this project? Currently, building a photo album to commemorate a moment requires a physical photo booth, or you have to do it manually. MobileBooth users can conveniently do all of the steps in a single place. 
 
-## Team Members
+## 🧑‍💻 Team Members
 
 ### Jack Hudson
 Role:
@@ -24,9 +24,13 @@ Role:
 Planned Issues:
 
 ### Tung Viet Le
-Role:
+Role: Project Manager
 
 Planned Issues:
+- Landing Page Screen UI design
+- Photo Capture and Customization Screen UI design
+- Photo Data Structure
+- Research about roles and assign proper responsibility for Tung Le on `README.md`
 
 ### Basim Majid
 Role:
