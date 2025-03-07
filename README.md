@@ -43,6 +43,8 @@ Role: Note-Taker
 
 Planned Issues:
 - Log in information stored in database
+- Feedback form for photobooth to store inquries
+- Document to store progress throguhout process
 
 ### Mihir Nagarkatti
 Role: Connector
