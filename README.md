@@ -44,8 +44,11 @@ Planned Issues:
 
 ### Mihir Nagarkatti
 Role: Connector
-- Coordinate teammate meetings based on available times (in person or online)
+- Coordinate teammate meetings based on available times (in person or online). This helps us work together better and makes sure we are on the same page about the project. 
 - Help teammates connect parts of issues they are working on (i.e. connecting one system to another)
 
 Planned Issues: 
-- 
+- FAQ and About Us Pages #18
+- Integrating AI with Custom Backgrounds #16
+- Research about roles and assign proper responsibility for Mihir Nagarkatti on README.md #7
+- Organize Meetings and Connect Teammates #17
