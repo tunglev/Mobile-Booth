@@ -43,6 +43,9 @@ Role:
 Planned Issues:
 
 ### Mihir Nagarkatti
-Role:
+Role: Connector
+- Coordinate teammate meetings based on available times (in person or online)
+- Help teammates connect parts of issues they are working on (i.e. connecting one system to another)
 
-Planned Issues:
+Planned Issues: 
+- 
