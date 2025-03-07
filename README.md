@@ -42,7 +42,7 @@ Role: Note-Taker
 
 
 Planned Issues:
--
+- Log in information stored in database
 
 ### Mihir Nagarkatti
 Role: Connector
