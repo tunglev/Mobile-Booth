@@ -37,9 +37,12 @@ Planned Issues:
 - Research about roles and assign proper responsibility for Tung Le on `README.md`
 
 ### Basim Majid
-Role:
+Role: Note-Taker
+-Keep track of progress and write down how the process is going as we go through the steps
+
 
 Planned Issues:
+-
 
 ### Mihir Nagarkatti
 Role: Connector
