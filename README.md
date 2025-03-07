@@ -13,8 +13,7 @@ A fun way to create memories and share them.
   - Authentication: User authenticates using Google for human verification and photo access.
   - Configuration: User has control over # of photos are taken, filters used, and the photo booth template
 
-  
-* Why this project? Currently, building a photo album to commemorate a moment requires a physical photo booth, or you have to do it manually. MobileBooth users can conveniently do all of the steps in a single place. 
+* Why this project? Currently, building a photo album to commemorate a moment requires a physical photo booth, or you have to do it manually. MobileBooth users can conveniently do all of the steps in a single place. The convenience of our system also will help people that are photo-shy, by making the process more fun and less awkward. 
 
 ## 🧑‍💻 Team Members
 
