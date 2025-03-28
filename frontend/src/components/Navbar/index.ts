@@ -21,6 +21,8 @@ export class Navbar extends BaseComponent {
       <a href="/home" id="home">Home</a>
       <ul id="menu">
         <li><a href="/login" id="login">Log In</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/about">About Us</a></li>
       </ul>
     `;
 

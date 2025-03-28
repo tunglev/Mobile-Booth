@@ -1,5 +1,7 @@
 import { HomePage } from "@/pages/Home";
 import { LoginPage } from "@/pages/Login";
+import { Faq } from "@/pages/Faq";
+import { AboutUs } from "@/pages/About";
 import { BaseComponent } from "@/components/BaseComponent";
 import { Navbar } from "@/components/Navbar";
 import { Events, EventHub } from "@/lib/eventhub";
@@ -17,6 +19,8 @@ export default class App {
     this.#pageComponents = {
       home: new HomePage(),
       login: new LoginPage(),
+      faq: new Faq(),
+      about: new AboutUs(),
     };
   }
 
@@ -64,6 +68,12 @@ export default class App {
         break;
       case "/login":
         this.#currentPage = "login";
+        break;
+      case "/faq":
+        this.#currentPage = "faq";
+        break;
+      case "/about":
+        this.#currentPage = "about";
         break;
       default:
         this.#currentPage = "404";
