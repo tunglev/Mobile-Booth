@@ -7,6 +7,7 @@ export class AboutUs extends BaseComponent {
 
   constructor() {
     super();
+    // this.loadCSS("About.css");
     // this.loadCSS("LoginPage");
   }
 
@@ -16,7 +17,7 @@ export class AboutUs extends BaseComponent {
     }
 
     this.#container = document.createElement("div");
-    this.#container.classList.add("login-page");
+    this.#container.classList.add("about-page");
     this.#setupContainerContent();
     this.#attachEventListeners();
 
@@ -26,7 +27,7 @@ export class AboutUs extends BaseComponent {
   #setupContainerContent() {
     if (!this.#container) return;
     this.#container.innerHTML = `
-      <div class="login-container">
+      <div class="about-container">
         <div id="Jack" class="about-card">
             <h3>Jack Hudson</h3>
             <img href="" alt="Picture of Jack">
