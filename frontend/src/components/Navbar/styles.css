@@ -29,3 +29,9 @@
 #menu li {
   list-style: none;
 }
+
+.home-icon {
+  width: 32px; /* Set a reasonable width */
+  height: 32px; /* Set a reasonable height */
+  vertical-align: middle; /* Align the icon vertically with text */
+}

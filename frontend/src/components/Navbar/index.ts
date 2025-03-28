@@ -18,8 +18,10 @@ export class Navbar extends BaseComponent {
 
     // Populate the <div> element with the navigation links
     container.innerHTML = `
-      <a href="/home" id="home">Home</a>
-      <ul id="menu">
+        <a href="/home" id="home">
+          <img src="src/assets/home.png" alt="Home" class="home-icon" />
+        </a>
+        <ul id="menu">
         <li><a href="/login" id="login">Log In</a></li>
         <li><a href="/faq">FAQ</a></li>
         <li><a href="/about">About Us</a></li>
