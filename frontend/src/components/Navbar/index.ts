@@ -20,7 +20,7 @@ export class Navbar extends BaseComponent {
     container.innerHTML = `
       <a href="/home" id="home">Home</a>
       <ul id="menu">
-        <li><a href="/login" id="login">Login</a></li>
+        <li><a href="/login" id="login">Log In</a></li>
       </ul>
     `;
 
