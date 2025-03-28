@@ -35,7 +35,7 @@ export class TaskListPage extends BaseComponent {
     
     // Create a header section
     const header = document.createElement("header");
-    header.innerHTML = `<h1>Task Manager</h1>`;
+    header.innerHTML = `<h1>Mobile Booth</h1>`;
     
     // Create main content section
     const mainContent = document.createElement("main");
