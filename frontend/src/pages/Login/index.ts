@@ -1,5 +1,6 @@
 import { BaseComponent } from "@/components/BaseComponent";
 import { Events, EventHub } from "@/lib/eventhub";
+import "./LoginPage.css";
 
 export class LoginPage extends BaseComponent {
   #container: HTMLElement | null = null;
@@ -25,10 +26,10 @@ export class LoginPage extends BaseComponent {
   #setupContainerContent() {
     if (!this.#container) return;
     this.#container.innerHTML = `
-      <div>
-        <h1>Login</h1>
-        <div>You will implement the login form here.</div>
-        <p>Also, the site is just very plain too. Make sure to add some CSS to spice it up :D</p>
+      <div class="login-container">
+        <h1>Authenticate</h1>
+        <p>Please sign into Google to continue.</p>
+        <button id="sign-in-button">Sign In</button>
       </div>
     `;
   }
