@@ -19,7 +19,6 @@ export class SelectComponent extends BaseComponent {
 		super();
 		this.options = options;
 		this.label = label;
-		this.loadCSS('src/components/SelectComponent', 'styles');
 	}
 
 	setOnChange(callback: (option: SelectOption) => void) {
@@ -44,7 +43,7 @@ export class SelectComponent extends BaseComponent {
 
 		// Add default text and chevron
 		const buttonText = document.createElement('span');
-		buttonText.textContent = this.selectedOption?.label || 'Option';
+		buttonText.textContent = this.selectedOption?.label || 'Select an option';
 
 		const chevron = document.createElement('span');
 		chevron.classList.add('select-chevron');
@@ -59,6 +58,7 @@ export class SelectComponent extends BaseComponent {
 		// Create options dropdown
 		this.optionsList = document.createElement('div');
 		this.optionsList.classList.add('select-options');
+		// Initially hide the dropdown
 		this.optionsList.style.display = 'none';
 
 		// Add options
@@ -66,15 +66,31 @@ export class SelectComponent extends BaseComponent {
 			const optionElement = document.createElement('div');
 			optionElement.classList.add('select-option');
 			optionElement.textContent = option.label;
+			
+			// Mark as selected if it's the current selected option
+			if (this.selectedOption && this.selectedOption.value === option.value) {
+				optionElement.classList.add('selected');
+			}
 
 			optionElement.addEventListener('click', () => {
 				this.selectOption(option);
 			});
 
+			// Add mouseover effect
+			optionElement.addEventListener('mouseover', () => {
+				// Remove 'active' class from all options
+				this.optionsList?.querySelectorAll('.select-option').forEach(el => {
+					el.classList.remove('active');
+				});
+				// Add 'active' class to the hovered option
+				optionElement.classList.add('active');
+			});
+
 			this.optionsList?.appendChild(optionElement);
 		});
 
-		this.container.appendChild(this.optionsList);
+		// Append to document body for proper positioning
+		document.body.appendChild(this.optionsList);
 
 		// Add event listener to toggle dropdown
 		this.selectButton.addEventListener('click', () => {
@@ -83,7 +99,10 @@ export class SelectComponent extends BaseComponent {
 
 		// Close dropdown when clicking outside
 		document.addEventListener('click', (e) => {
-			if (this.container && !this.container.contains(e.target as Node) && this.isOpen) {
+			if (this.container && 
+				!this.container.contains(e.target as Node) && 
+				!this.optionsList?.contains(e.target as Node) && 
+				this.isOpen) {
 				this.closeDropdown();
 			}
 		});
@@ -100,10 +119,19 @@ export class SelectComponent extends BaseComponent {
 	}
 
 	private openDropdown() {
-		if (this.optionsList) {
+		if (this.optionsList && this.selectButton && this.container) {
+			// Position the dropdown below the button
+			const rect = this.container.getBoundingClientRect();
+			
+			this.optionsList.style.position = 'absolute';
+			this.optionsList.style.top = `${rect.bottom}px`;
+			this.optionsList.style.left = `${rect.left}px`;
+			this.optionsList.style.width = `${rect.width}px`;
 			this.optionsList.style.display = 'block';
+			this.optionsList.style.backgroundColor = 'white';
+			
 			this.isOpen = true;
-			this.selectButton?.classList.add('active');
+			this.selectButton.classList.add('active');
 		}
 	}
 
@@ -118,11 +146,23 @@ export class SelectComponent extends BaseComponent {
 	private selectOption(option: SelectOption) {
 		this.selectedOption = option;
 
+		// Update the button text
 		if (this.selectButton) {
 			const buttonText = this.selectButton.querySelector('span');
 			if (buttonText) {
 				buttonText.textContent = option.label;
 			}
+		}
+
+		// Update the selected class on options
+		if (this.optionsList) {
+			this.optionsList.querySelectorAll('.select-option').forEach((el, index) => {
+				if (this.options[index].value === option.value) {
+					el.classList.add('selected');
+				} else {
+					el.classList.remove('selected');
+				}
+			});
 		}
 
 		this.closeDropdown();
@@ -132,7 +172,22 @@ export class SelectComponent extends BaseComponent {
 		}
 	}
 
+	setValue(value: string) {
+		const option = this.options.find(opt => opt.value === value);
+		if (option) {
+			this.selectOption(option);
+		}
+		return this;
+	}
+
 	getValue(): string | null {
 		return this.selectedOption ? this.selectedOption.value : null;
+	}
+
+	// Clean up when component is removed
+	cleanup() {
+		if (this.optionsList && document.body.contains(this.optionsList)) {
+			document.body.removeChild(this.optionsList);
+		}
 	}
 }
