@@ -1,4 +1,4 @@
-import { TaskListPage } from "@/pages/TaskList";
+import { HomePage } from "@/pages/Home";
 import { LoginPage } from "@/pages/Login";
 import { BaseComponent } from "@/components/BaseComponent";
 import { Navbar } from "@/components/Navbar";
@@ -15,7 +15,7 @@ export default class App {
     this.#hub = EventHub.getInstance();
     this.#hub.subscribe(Events.NavigateTo, (page: string) => this.#navigateTo(page));
     this.#pageComponents = {
-      home: new TaskListPage(),
+      home: new HomePage(),
       login: new LoginPage(),
     };
   }
