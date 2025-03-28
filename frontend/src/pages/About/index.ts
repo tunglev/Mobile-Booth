@@ -1,23 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="main.css">
-    <title>About Us</title>
-</head>
-<body>
-    <div class="page-title">About Us</div>
+import { BaseComponent } from "@/components/BaseComponent";
+import { Events, EventHub } from "@/lib/eventhub";
+import "./About.css";
 
-    <div id="navbar">
-        <a href="index.html">Home</a>
-        <a href="faq.html">FAQ</a>
-        <a>About Us</a>
-    </div>
+export class AboutUs extends BaseComponent {
+  #container: HTMLElement | null = null;
 
-    <!-- Hard-coded for now, maybe populate with js/ts later? -->
-    
-    <div id="about-container">
+  constructor() {
+    super();
+    // this.loadCSS("LoginPage");
+  }
+
+  render() {
+    if (this.#container) {
+      return this.#container;
+    }
+
+    this.#container = document.createElement("div");
+    this.#container.classList.add("login-page");
+    this.#setupContainerContent();
+    this.#attachEventListeners();
+
+    return this.#container;
+  }
+
+  #setupContainerContent() {
+    if (!this.#container) return;
+    this.#container.innerHTML = `
+      <div class="login-container">
         <div id="Jack" class="about-card">
             <h3>Jack Hudson</h3>
             <img href="" alt="Picture of Jack">
@@ -41,8 +50,11 @@
             <img href="" alt="Picture of Mihir">
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
-    </div>
+      </div>
+    `;
+  }
 
-    
-</body>
-</html>
+  #attachEventListeners() {
+    if (!this.#container) return;
+  }
+}
