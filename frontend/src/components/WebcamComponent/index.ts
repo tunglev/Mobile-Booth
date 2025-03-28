@@ -1,11 +1,14 @@
 import { BaseComponent } from "@/components/BaseComponent";
 import { Events, EventHub } from "@/lib/eventhub";
+import { SelectComponent, SelectOption } from "@/components/SelectComponent";
 
 export class WebcamComponent extends BaseComponent {
   #container: HTMLElement | null = null;
   #video: HTMLVideoElement | null = null;
   #stream: MediaStream | null = null;
   #isActive: boolean = false;
+  #filterSelect: SelectComponent | null = null;
+  #currentFilter: string = "none";
 
   constructor() {
     super();
@@ -34,6 +37,21 @@ export class WebcamComponent extends BaseComponent {
     this.#video.autoplay = true;
     this.#video.playsInline = true;
     
+    // Create filter select component
+    const filterOptions: SelectOption[] = [
+      { value: "none", label: "No Filter" },
+      { value: "grayscale", label: "Grayscale" },
+      { value: "sepia", label: "Sepia" },
+      { value: "invert", label: "Invert" },
+      { value: "blur", label: "Blur" },
+      { value: "brightness", label: "Brightness" }
+    ];
+    
+    this.#filterSelect = new SelectComponent(filterOptions, "Filter");
+    this.#filterSelect.setOnChange((option: SelectOption) => {
+      this.#applyFilter(option.value);
+    });
+    
     // Create controls
     const controls = document.createElement("div");
     controls.classList.add("webcam-controls");
@@ -50,8 +68,14 @@ export class WebcamComponent extends BaseComponent {
     controls.appendChild(startButton);
     controls.appendChild(captureButton);
     
+    // Create filter container
+    const filterContainer = document.createElement("div");
+    filterContainer.classList.add("filter-container");
+    filterContainer.appendChild(this.#filterSelect.render());
+    
     // Add elements to container
     this.#container.appendChild(this.#video);
+    this.#container.appendChild(filterContainer);
     this.#container.appendChild(controls);
   }
 
@@ -105,6 +129,34 @@ export class WebcamComponent extends BaseComponent {
     
     this.#isActive = false;
   }
+  
+  #applyFilter(filter: string) {
+    if (!this.#video) return;
+    
+    this.#currentFilter = filter;
+    
+    // Reset filters
+    this.#video.style.filter = "";
+    
+    // Apply the selected filter
+    switch (filter) {
+      case "grayscale":
+        this.#video.style.filter = "grayscale(100%)";
+        break;
+      case "sepia":
+        this.#video.style.filter = "sepia(100%)";
+        break;
+      case "invert":
+        this.#video.style.filter = "invert(100%)";
+        break;
+      case "blur":
+        this.#video.style.filter = "blur(5px)";
+        break;
+      case "brightness":
+        this.#video.style.filter = "brightness(150%)";
+        break;
+    }
+  }
 
   #captureImage() {
     if (!this.#video || !this.#isActive) return;
@@ -119,6 +171,13 @@ export class WebcamComponent extends BaseComponent {
     // Draw the current video frame to the canvas
     if (context) {
       context.drawImage(this.#video, 0, 0, canvas.width, canvas.height);
+      
+      // Apply filter to canvas if needed
+      if (this.#currentFilter !== "none") {
+        context.filter = this.#video.style.filter;
+        context.drawImage(canvas, 0, 0);
+        context.filter = "none";
+      }
       
       // Convert canvas to data URL
       const imageDataURL = canvas.toDataURL("image/png");
