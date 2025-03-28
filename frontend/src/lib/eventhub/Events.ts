@@ -22,5 +22,8 @@ export const Events = {
   TaskError: "TaskError",
   
   // Pages switching events
-  NavigateTo: "NavigateTo"
+  NavigateTo: "NavigateTo",
+  
+  // Webcam events
+  ImageCaptured: "ImageCaptured"
 };
