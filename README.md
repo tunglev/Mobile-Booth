@@ -27,9 +27,9 @@ Role: Timekeeper
 - Reiterate long-term and short-term goals to teammates
 
 Planned Issues:
-- Google authentication integration
-- User Storage configuration
-- Download/Share finalized photo booth collage
+- Google authentication integration part 2
+- authenticated limits
+- Download/Share finalized photo
 
 ### Tung Viet Le
 Role: Project Manager
