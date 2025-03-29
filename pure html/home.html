@@ -49,9 +49,17 @@
           <div class="webcam-controls">
             <button id="startWebcam">Start Camera</button>
             <button id="captureImage" disabled>Take Photo</button>
+            <button id="toggleVideoMode">Toogle Video Mode</button>
           </div>
           
-          <div class="image-preview" id="image-preview"></div>
+          <div class="image-preview" id="image-preview" >
+            <img id="captured-image" alt="Captured Image" class="captured-image" src="assets/placeholder.jpeg">
+            <!-- Share Button -->
+            <button id="shareButton">
+              🌐 Share
+            </button>
+            <!-- share button end -->
+          </div>
         </div>
       </section>
     </main>
