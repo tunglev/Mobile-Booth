@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="home.html" id="home">Home</a>
+        <ul id="menu">
+            <li><a href="login.html" id="login">Log In</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="feedback.html">Feedback</a></li>
+        </ul>
+    </nav>
+
+    <div class="login-page">
+        <div class="login-container">
+            <h2>Feedback Form</h2>
+            <form class="feedback-form">
+                <div class="form-group">
+                    <input type="text" placeholder="Your Name" class="form-input">
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Your Email" class="form-input">
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Your Feedback" class="form-textarea" rows="5"></textarea>
+                </div>
+                <button type="submit" class="submit-button">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Only keeping styles that aren't available in styles.css */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-button {
+            width: 100%;
+            margin-top: 1rem;
+        }
+    </style>
+</body>
+</html>
