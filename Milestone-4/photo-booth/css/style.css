@@ -137,10 +137,11 @@ main > h1 {
 }
 
 /* FAQ Page */
-.faq-container {
-  width: 90%;
-  max-width: 600px;
-  margin: 2rem auto;
+
+h2 {
+  text-align: center;
+  margin: 2rem 0 1rem 0;
+  color: #2B2D42;
 }
 
 .faq-item {
@@ -151,7 +152,22 @@ main > h1 {
   border: 1px solid #ddd;
 }
 
-.faq-item h2 {
-  color: #2B2D42;
-  margin-bottom: 0.5rem;
+summary {
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0.5rem;
+  background-color: #44723a;
+  color: #EDF2F4;
+  border-radius: 5px;
+}
+
+summary:hover {
+  background-color: #2a623f;
+}
+
+details p {
+  padding: 1rem;
+  margin-top: 0.5rem;
+  background: #f1f1f1;
+  border-radius: 5px;
 }
