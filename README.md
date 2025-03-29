@@ -15,6 +15,10 @@ A fun way to create memories and share them.
 
 * Why this project? Currently, building a photo album to commemorate a moment requires a physical photo booth, or you have to do it manually. MobileBooth users can conveniently do all of the steps in a single place. The convenience of our system also will help people that are photo-shy, by making the process more fun and less awkward. 
 
+## Milestone 4 Slide Deck
+
+https://docs.google.com/presentation/d/1Ei-WO3MWebUHZTFe2BJRvO38NK1RzmhxfQJkG98RgNE/edit?usp=sharing
+
 ## 🧑‍💻 Team Members
 
 ### Jack Hudson
