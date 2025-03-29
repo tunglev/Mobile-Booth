@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Login - Group 15 Mobile Booth</title>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="home.html" id="home">Home</a>
+    <ul id="menu">
+      <li><a href="login.html" id="login">Log In</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="about.html">About Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="login-page">
+    <div class="login-container">
+      <h1>Authenticate</h1>
+      <p>Please sign into Google to continue.</p>
+      <button id="sign-in-button">Sign In</button>
+    </div>
+  </div>
+
+  <script>
+    // Simple login simulation
+    document.getElementById('sign-in-button').addEventListener('click', function() {
+      alert('This would connect to a real authentication service in a production environment.');
+      window.location.href = 'home.html';
+    });
+  </script>
+</body>
+</html> 
