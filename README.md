@@ -7,7 +7,7 @@ A fun way to create memories and share them.
 * Solution: Our app is bringing that tradition back—using the very technology that replaced photo booths to revive them!
 
 * Key Features:
-  - Custom background: Leverage ML to allow the user to configure a custom background in all or some of their photos
+  - Filters and Edits: Use filters on your photos and edit them. In a future update, potentially leverage ML to allow the user to configure a custom background in all or some of their photos.
   - Sharing: Download photo, store in you own personal cloud, or share with friends and family.
   - Video: User can opt to have short videos taken instead of photos.
   - Authentication: User authenticates using Google for human verification and photo access.
@@ -44,7 +44,6 @@ Planned Issues:
 Role: Note-Taker
 -Keep track of progress and write down how the process is going as we go through the steps
 
-
 Planned Issues:
 - Log in information stored in database
 - Feedback form for photobooth to store inquries
@@ -55,8 +54,10 @@ Role: Connector
 - Coordinate teammate meetings based on available times (in person or online). This helps us work together better and makes sure we are on the same page about the project. 
 - Help teammates connect parts of issues they are working on (i.e. connecting one system to another)
 
-Planned Issues: 
+Completed Issues:
 - FAQ and About Us Pages #18
-- Integrating AI with Custom Backgrounds #16
 - Research about roles and assign proper responsibility for Mihir Nagarkatti on README.md #7
+
+Planned/Ongoing Issues: 
+- Integrating AI with Custom Backgrounds #16
 - Organize Meetings and Connect Teammates #17
