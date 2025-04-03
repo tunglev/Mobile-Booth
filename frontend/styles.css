@@ -271,4 +271,110 @@ button:disabled:hover {
 
 .about-content {
   line-height: 1.6;
+}
+
+/* Screens Container Styles */
+.screens-container {
+  width: 100%;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+}
+
+.screen.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Screen Navigation Styles */
+.screen-navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.screen-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.screen-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.screen-dot.active {
+  background-color: #007bff;
+  transform: scale(1.2);
+}
+
+.screen-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Navigation Buttons */
+.screen-navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Edit Screen Styles */
+.edit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.edit-controls {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Share Screen Styles */
+.share-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.final-preview {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.final-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.share-options {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 } 
