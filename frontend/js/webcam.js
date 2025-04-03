@@ -2,6 +2,7 @@
 const video = document.getElementById('webcam-video');
 const startButton = document.getElementById('startWebcam');
 const captureButton = document.getElementById('captureImage');
+const finalizeButton = document.getElementById('finalizePhoto');
 const imagePreview = document.getElementById('image-preview');
 const filterSelect = document.getElementById('filter-select');
 const filterOptions = document.getElementById('filter-options');
@@ -109,6 +110,7 @@ function applyFilter(filter) {
 // Capture image function
 function captureImage() {
 	if (!isActive) return;
+	finalizeButton.disabled = false;
 
 	const canvas = document.createElement('canvas');
 	const context = canvas.getContext('2d');
@@ -135,6 +137,8 @@ function captureImage() {
 		displayCapturedImage(imageDataURL);
 	}
 }
+
+// If we ever make a "clear photo" button, set finalizedButton.disabled to true
 
 // Display captured image
 function displayCapturedImage(imageDataURL) {

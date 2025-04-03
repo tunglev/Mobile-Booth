@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 10px;
+            background-color: #f0f0f0;
+        }
+        img {
+            max-width: 75%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" accept="image/*" id="fileInput">
+    <img id="photo" alt="Uploaded Image" style="display: none;">
+    <div class="controls" id="controls" style="display: none;">
+        <label>Brightness: <input type="range" id="brightness" min="50" max="150" value="100"></label>
+        <label>Contrast: <input type="range" id="contrast" min="50" max="150" value="100"></label>
+        <label>Grayscale: <input type="range" id="grayscale" min="0" max="100" value="0"></label>
+    </div>
+    
+    <script>
+        const fileInput = document.getElementById("fileInput");
+        const photo = document.getElementById("photo");
+        const controls = document.getElementById("controls");
+        const brightness = document.getElementById("brightness");
+        const contrast = document.getElementById("contrast");
+        const grayscale = document.getElementById("grayscale");
+
+        fileInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    photo.src = e.target.result;
+                    photo.style.display = "block";
+                    controls.style.display = "flex";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateFilters() {
+            photo.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) grayscale(${grayscale.value}%)`;
+        }
+
+        brightness.addEventListener("input", updateFilters);
+        contrast.addEventListener("input", updateFilters);
+        grayscale.addEventListener("input", updateFilters);
+    </script>
+</body>
+</html>
