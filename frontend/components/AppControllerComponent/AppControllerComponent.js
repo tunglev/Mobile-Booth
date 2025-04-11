@@ -40,7 +40,6 @@ export class AppControllerComponent {
   // Sets up the HTML structure for the container
   #setupContainerContent() {
     this.#container.innerHTML = `
-      <div>THIS IS THE TOP OF THE APP CONTROLLER CONTAINER</div>
       <div id="viewContainer"></div>
     `;
   }
