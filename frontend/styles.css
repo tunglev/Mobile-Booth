@@ -17,7 +17,7 @@ ul, li {
   margin: 0;
 }
 
-button {
+button, .button {
   background-color: #007bff;
   color: #ffffff;
   border: none;
