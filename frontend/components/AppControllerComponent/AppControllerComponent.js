@@ -1,28 +1,32 @@
 import { NavbarComponent } from '../NavbarComponent/NavbarComponent.js';
+import { PhotoEditorComponent } from '../PhotoEditorComponent/PhotoEditorComponent.js';
 import { WebcamPageComponent } from '../WebcamPageComponent/WebcamPageComponent.js';
-import { Views } from './Views.js';
+import { Views, ViewArr } from './Views.js';
 
 export class AppControllerComponent {
   #container = null; // Private container for the component
   #currentView = Views.WebcamPage; // Track the current view: 
   #navbarComponent;
-  #webcamPage
+  #webcamPage;
+  #photoEditPage;
 //   #hub = null; // EventHub instance for managing events
 
   constructor() {
     this.#navbarComponent = new NavbarComponent();
     this.#webcamPage = new WebcamPageComponent();
+    this.#photoEditPage = new PhotoEditorComponent();
   }
 
   // Render the AppController component and return the container
   render() {
     this.#createContainer();
     this.#setupContainerContent();
-    this.#attachEventListeners();
     this.#navbarComponent.render();
 
     // Initially render the main view
     this.#renderCurrentView();
+
+    this.#attachEventListeners();
 
     return this.#container;
   }
@@ -43,6 +47,24 @@ export class AppControllerComponent {
 
   // Attaches the necessary event listeners
   #attachEventListeners() {
+    const next = this.#container.querySelector("#nextPage");
+    const prev = this.#container.querySelector("#prevPage");
+    if (next) {
+      next.addEventListener("click", () => {
+        // Go to the next view
+        console.log("next view");
+        this.#currentView = ViewArr[ViewArr.indexOf(Views[this.#currentView]) + 1];
+        this.#renderCurrentView();
+      })
+    }
+    if (prev) {
+      prev.addEventListener("click", () => {
+        // Go to the previous view
+        console.log("prev view");
+        this.#currentView = ViewArr[ViewArr.indexOf(Views[this.#currentView]) - 1];
+        this.#renderCurrentView();
+      })
+    }
   }
 
   // Toggles the view
@@ -59,6 +81,8 @@ export class AppControllerComponent {
 
     if (this.#currentView === Views.WebcamPage) {
       viewContainer.appendChild(this.#webcamPage.render());
+    } else if (this.#currentView === Views.PhotoEditPage) {
+      viewContainer.appendChild(this.#photoEditPage.render());
     }
   }
 }

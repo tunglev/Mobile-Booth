@@ -20,6 +20,10 @@ export class WebcamPageComponent extends BaseComponent {
     }
 
     render() {
+        if (this.#container) {
+            return this.#container;
+        }
+
         // Create the main container
         this.#container = document.createElement('webcam-page');
 
@@ -57,7 +61,7 @@ export class WebcamPageComponent extends BaseComponent {
                 <button id="startWebcam">Start Camera</button>
                 <button id="captureImage" disabled>Take Photo</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
-                <button id="finalizePhoto" disabled onclick="location.href='/frontend/post-photo.html'" style="text-decoration: none;">Finalize and Edit Photo</a>
+                <button id="nextPage" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
                 </div>
                 
                 <div class="image-preview" id="image-preview" >
@@ -71,7 +75,7 @@ export class WebcamPageComponent extends BaseComponent {
         </main>
         `
         this.#initializeProperties();
-        this.#handleOptions();
+        this.#addOptionsEventListeners();
         return this.#container;
     }
 
@@ -79,7 +83,7 @@ export class WebcamPageComponent extends BaseComponent {
         this.#video = this.#container.querySelector('#webcam-video');
         this.#startButton = this.#container.querySelector('#startWebcam');
         this.#captureButton = this.#container.querySelector('#captureImage');
-        this.#finalizeButton = this.#container.querySelector('#finalizePhoto');
+        this.#finalizeButton = this.#container.querySelector('#nextPage');
         this.#imagePreview = this.#container.querySelector('#image-preview');
         this.#filterSelect = this.#container.querySelector('#filter-select');
         this.#filterOptions = this.#container.querySelector('#filter-options');
@@ -94,7 +98,7 @@ export class WebcamPageComponent extends BaseComponent {
         });
     }
 
-    #handleOptions() {
+    #addOptionsEventListeners() {
         const options = this.#container.querySelectorAll('.select-option');
         options.forEach((option) => {
             option.addEventListener('click', () => {
@@ -118,7 +122,6 @@ export class WebcamPageComponent extends BaseComponent {
 
     async #toggleWebcam() {
         console.log('toggleWebcam');
-        console.log(this);
         if (!this.#isActive) {
             try {
                 this.#stream = await navigator.mediaDevices.getUserMedia({
