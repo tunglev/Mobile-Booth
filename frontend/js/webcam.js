@@ -34,7 +34,7 @@ options.forEach((option) => {
 		// Close dropdown
 		filterOptions.classList.remove('active');
 		filterSelect.classList.remove('active');
-	});
+	});	
 });
 
 // Toggle webcam function
@@ -145,6 +145,7 @@ function displayCapturedImage(imageDataURL) {
 	const img = document.createElement('img');
 	img.src = imageDataURL;
 	img.classList.add('captured-image');
+	img.style.userSelect = "none";
 	imagePreview.appendChild(img);
 }
 
