@@ -9,10 +9,13 @@ export class WebcamPageComponent extends BaseComponent {
 	#imagePreview = null;
 	#filterSelect = null;
 	#filterOptions = null;
+	#gridSelect = null;
+	#gridOptions = null;
 
 	#stream = null;
 	#isActive = false;
 	#currentFilter = 'none';
+	#currentGridLayout = '1x4'; // Default grid layout
 	#db = null;
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
@@ -61,6 +64,21 @@ export class WebcamPageComponent extends BaseComponent {
                 </div>
                 </div>
                 
+                <div class="grid-container">
+                <div class="select-container">
+                    <label class="select-label">Grid Layout</label>
+                    <div class="select-button" id="grid-select">
+                    <span class="select-value">1x4 (Row)</span>
+                    <span class="select-chevron">▼</span>
+                    </div>
+                    <div class="select-options" id="grid-options">
+                    <div class="select-option selected" data-value="1x4">1x4 (Row)</div>
+                    <div class="select-option" data-value="2x2">2x2 (Grid)</div>
+                    <div class="select-option" data-value="4x1">4x1 (Column)</div>
+                    </div>
+                </div>
+                </div>
+                
                 <div class="webcam-controls">
                 <button id="startWebcam">Start Camera</button>
                 <button id="captureImage" disabled>Take Photo</button>
@@ -69,7 +87,7 @@ export class WebcamPageComponent extends BaseComponent {
                 </div>
                 
                 <div class="image-preview" id="image-preview">
-                    <div class="images-row" id="images-row">
+                    <div class="images-row layout-1x4" id="images-row">
                         <img class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
                     </div>
                     <button id="shareButton">
@@ -82,6 +100,7 @@ export class WebcamPageComponent extends BaseComponent {
         `;
 		this.#initializeProperties();
 		this.#addOptionsEventListeners();
+		this.#addGridEventListeners();
 		return this.#container;
 	}
 
@@ -93,10 +112,13 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#imagePreview = this.#container.querySelector('#image-preview');
 		this.#filterSelect = this.#container.querySelector('#filter-select');
 		this.#filterOptions = this.#container.querySelector('#filter-options');
+		this.#gridSelect = this.#container.querySelector('#grid-select');
+		this.#gridOptions = this.#container.querySelector('#grid-options');
 
 		this.#startButton.addEventListener('click', () => this.#toggleWebcam());
 		this.#captureButton.addEventListener('click', () => this.#captureImage());
 		this.#filterSelect.addEventListener('click', () => this.#toggleFilterOptions());
+		this.#gridSelect.addEventListener('click', () => this.#toggleGridOptions());
 		window.addEventListener('beforeunload', () => {
 			if (this.#stream) {
 				this.#stream.getTracks().forEach((track) => track.stop());
@@ -123,6 +145,29 @@ export class WebcamPageComponent extends BaseComponent {
 				// Close dropdown
 				this.#filterOptions.classList.remove('active');
 				this.#filterSelect.classList.remove('active');
+			});
+		});
+	}
+
+	#addGridEventListeners() {
+		const options = this.#container.querySelectorAll('#grid-options .select-option');
+		options.forEach((option) => {
+			option.addEventListener('click', () => {
+				// Update selected class
+				options.forEach((opt) => opt.classList.remove('selected'));
+				option.classList.add('selected');
+
+				// Update display text
+				this.#gridSelect.querySelector('.select-value').textContent = option.textContent;
+
+				// Apply grid layout
+				const layout = option.getAttribute('data-value');
+				this.#applyGridLayout(layout);
+				this.#saveGridPreference(layout);
+
+				// Close dropdown
+				this.#gridOptions.classList.remove('active');
+				this.#gridSelect.classList.remove('active');
 			});
 		});
 	}
@@ -166,6 +211,11 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#filterSelect.classList.toggle('active');
 	}
 
+	#toggleGridOptions() {
+		this.#gridOptions.classList.toggle('active');
+		this.#gridSelect.classList.toggle('active');
+	}
+
 	#applyFilter(filter) {
 		this.#currentFilter = filter;
 
@@ -190,6 +240,21 @@ export class WebcamPageComponent extends BaseComponent {
 				this.#video.style.filter = 'brightness(150%)';
 				break;
 		}
+	}
+
+	#applyGridLayout(layout) {
+		this.#currentGridLayout = layout;
+		const imagesRow = this.#container.querySelector('#images-row');
+		
+		if (imagesRow) {
+			// Remove all layout classes first
+			imagesRow.classList.remove('layout-1x4', 'layout-2x2', 'layout-4x1');
+			// Add the new layout class
+			imagesRow.classList.add(`layout-${layout}`);
+		}
+		
+		// Re-display images with new layout
+		this.#displayCapturedImages();
 	}
 
 	#captureImage() {
@@ -236,7 +301,7 @@ export class WebcamPageComponent extends BaseComponent {
 		if (!imagesRow) {
 			imagesRow = document.createElement('div');
 			imagesRow.id = 'images-row';
-			imagesRow.classList.add('images-row');
+			imagesRow.classList.add('images-row', `layout-${this.#currentGridLayout}`);
 			this.#imagePreview.prepend(imagesRow);
 		}
 
@@ -290,9 +355,10 @@ export class WebcamPageComponent extends BaseComponent {
 
 		const transaction = this.#db.transaction(['userPreferences'], 'readonly');
 		const store = transaction.objectStore('userPreferences');
-		const request = store.get('filterPreference');
-
-		request.onsuccess = (event) => {
+		
+		// Load filter preference
+		const filterRequest = store.get('filterPreference');
+		filterRequest.onsuccess = (event) => {
 			if (event.target.result) {
 				const { filter } = event.target.result;
 				this.#currentFilter = filter;
@@ -301,7 +367,7 @@ export class WebcamPageComponent extends BaseComponent {
 				setTimeout(() => {
 					if (this.#container) {
 						// Update the UI to reflect the saved filter
-						const options = this.#container.querySelectorAll('.select-option');
+						const options = this.#container.querySelectorAll('#filter-options .select-option');
 						options.forEach((option) => {
 							if (option.getAttribute('data-value') === filter) {
 								// Update the selected class
@@ -322,7 +388,39 @@ export class WebcamPageComponent extends BaseComponent {
 			}
 		};
 
-		request.onerror = (event) => {
+		// Load grid layout preference
+		const gridRequest = store.get('gridPreference');
+		gridRequest.onsuccess = (event) => {
+			if (event.target.result) {
+				const { layout } = event.target.result;
+				this.#currentGridLayout = layout;
+
+				// Apply the saved grid layout once the component is rendered
+				setTimeout(() => {
+					if (this.#container) {
+						// Update the UI to reflect the saved grid layout
+						const options = this.#container.querySelectorAll('#grid-options .select-option');
+						options.forEach((option) => {
+							if (option.getAttribute('data-value') === layout) {
+								// Update the selected class
+								options.forEach((opt) => opt.classList.remove('selected'));
+								option.classList.add('selected');
+
+								// Update display text
+								if (this.#gridSelect) {
+									this.#gridSelect.querySelector('.select-value').textContent = option.textContent;
+								}
+
+								// Apply the grid layout
+								this.#applyGridLayout(layout);
+							}
+						});
+					}
+				}, 0);
+			}
+		};
+
+		filterRequest.onerror = gridRequest.onerror = (event) => {
 			console.error('Error loading user preferences:', event.target.error);
 		};
 	}
@@ -340,6 +438,22 @@ export class WebcamPageComponent extends BaseComponent {
 
 		transaction.onerror = (event) => {
 			console.error('Error saving filter preference:', event.target.error);
+		};
+	}
+
+	#saveGridPreference(layout) {
+		if (!this.#db) return;
+
+		const transaction = this.#db.transaction(['userPreferences'], 'readwrite');
+		const store = transaction.objectStore('userPreferences');
+
+		store.put({
+			id: 'gridPreference',
+			layout: layout,
+		});
+
+		transaction.onerror = (event) => {
+			console.error('Error saving grid preference:', event.target.error);
 		};
 	}
 }
