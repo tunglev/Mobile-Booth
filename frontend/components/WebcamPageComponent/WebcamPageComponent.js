@@ -14,7 +14,7 @@ export class WebcamPageComponent extends BaseComponent {
     #isActive = false;
     #currentFilter = 'none';
 
-    constructor(taskData = {}) {
+    constructor() {
         super();
         this.loadCSS('WebcamPageComponent');
     }
