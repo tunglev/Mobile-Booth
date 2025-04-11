@@ -26,3 +26,19 @@
     width: 100%;
     margin-bottom: 1rem;
 }
+
+.search-container {
+    position: relative;
+}
+
+.filter-search {
+    position: relative;
+    background: transparent !important;
+    z-index: 1;
+    width: 100%;
+}
+
+.ghost-input {
+    z-index: 0;
+    background: transparent !important;
+}
