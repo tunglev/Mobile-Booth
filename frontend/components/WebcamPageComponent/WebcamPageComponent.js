@@ -61,11 +61,11 @@ export class WebcamPageComponent extends BaseComponent {
                 <button id="startWebcam">Start Camera</button>
                 <button id="captureImage" disabled>Take Photo</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
-                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
+                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
                 </div>
                 
                 <div class="image-preview" id="image-preview" >
-                <img id="captured-image" alt="Captured Image" class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
+                <img id="captured-image" alt="Captured Image" class="captured-image" src="assets/placeholder.jpeg">
                 <button id="shareButton">
                     🌐 Share
                 </button>
@@ -268,7 +268,7 @@ function saveImageToIndexedDB(canvas) {
         }
     }, 'image/png');
   
-  }
+}
   
 function saveBlobToIndexedDB(blob, name, db) {
     const transaction = db.transaction(['images'], 'readwrite');

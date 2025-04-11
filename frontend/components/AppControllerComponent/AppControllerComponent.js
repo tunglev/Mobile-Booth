@@ -9,6 +9,8 @@ export class AppControllerComponent {
   #navbarComponent;
   #webcamPage;
   #photoEditPage;
+  #finalizeListenerSet = false;
+  #backToCameraListenerSet = false;
 //   #hub = null; // EventHub instance for managing events
 
   constructor() {
@@ -20,7 +22,6 @@ export class AppControllerComponent {
   // Render the AppController component and return the container
   render() {
     this.#createContainer();
-    this.#setupContainerContent();
     this.#navbarComponent.render();
 
     // Initially render the main view
@@ -47,10 +48,22 @@ export class AppControllerComponent {
   // Attaches the necessary event listeners
   #attachEventListeners() {
     const finalizePhoto = this.#container.querySelector("#finalizePhoto");
-    if (finalizePhoto) {
+    if (finalizePhoto && !this.#finalizeListenerSet) {
       finalizePhoto.addEventListener("click", () => {
         this.#currentView = Views.PhotoEditPage;
         this.#renderCurrentView();
+        this.#finalizeListenerSet = true; //so we don't keep adding event listeners
+        this.#attachEventListeners();
+      })
+    }
+
+    const goBackToCamera = this.#container.querySelector("#goBackToCamera");
+    if (goBackToCamera && !this.#backToCameraListenerSet) {
+      goBackToCamera.addEventListener("click", () => {
+        this.#currentView = Views.WebcamPage;
+        this.#renderCurrentView();
+        this.#backToCameraListenerSet = true; //so we don't keep adding event listeners
+        this.#attachEventListeners();
       })
     }
   }
@@ -62,8 +75,10 @@ export class AppControllerComponent {
 
   // Renders the current view based on the #currentView state
   #renderCurrentView() {
+    this.#container.innerHTML = "";
+    this.#setupContainerContent();
     const viewContainer = this.#container.querySelector('#viewContainer');
-    viewContainer.innerHTML = ''; // Clear existing content
+    viewContainer.innerHTML = ""; // Clear existing content
 
     viewContainer.appendChild(this.#navbarComponent.render());
 
@@ -75,3 +90,4 @@ export class AppControllerComponent {
     }
   }
 }
+

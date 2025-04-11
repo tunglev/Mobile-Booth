@@ -24,13 +24,13 @@ export class PhotoEditorComponent extends BaseComponent {
   // Creates the container element and applies the necessary classes
   #createContainer() {
     this.#container = document.createElement('div');
-
   }
   
   // Sets up the inner HTML of the container
   #setupContainerContent() {
     this.#container.innerHTML = `
         <h1>Photo Editor</h1>
+        <button id="goBackToCamera">Go Back To Camera</button>
     `;
   }
 
@@ -38,6 +38,10 @@ export class PhotoEditorComponent extends BaseComponent {
   #attachEventListeners() {
   }
 
+
+  #initializeProperties() {
+
+  }
 
   getContainer() {
     return this.#container;
