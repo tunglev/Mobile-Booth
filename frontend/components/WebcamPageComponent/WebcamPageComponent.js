@@ -20,6 +20,7 @@ export class WebcamPageComponent extends BaseComponent {
     }
 
     render() {
+        this.#stopWebcam();
         if (this.#container) {
             return this.#container;
         }
@@ -139,18 +140,24 @@ export class WebcamPageComponent extends BaseComponent {
             }
         } else {
             this.#stopWebcam();
-            this.#startButton.textContent = 'Start Camera';
-            this.#captureButton.disabled = true;
+
         }
     }
 
     #stopWebcam() {
+        if (this.#startButton) {
+            this.#startButton.textContent = 'Start Camera';
+        }
+        if (this.#captureButton) {
+            this.#captureButton.disabled = true;
+        }
         if (this.#stream) {
             this.#stream.getTracks().forEach((track) => track.stop());
             this.#stream = null;
         }
-    
-        this.#video.srcObject = null;
+        if (this.#video) {
+            this.#video.srcObject = null;
+        }
         this.#isActive = false;
     }
 
@@ -218,7 +225,7 @@ export class WebcamPageComponent extends BaseComponent {
                     console.error('Failed to get blob from canvas');
                 }
             }, 'image/png');
-            saveImageToIndexedDB(canvas)
+            saveImageToIndexedDB(canvas);
     
             // Display the captured image
             
@@ -241,21 +248,16 @@ export class WebcamPageComponent extends BaseComponent {
     }
 }
 
-
-
-function saveImageToIndexedDB(canvas) {
+async function saveImageToIndexedDB(canvas) {
     let db;
     const request = indexedDB.open('ImageDB', 1);
-  
     request.onupgradeneeded = function (event) {
         db = event.target.result;
         db.createObjectStore('images', { keyPath: 'id' });
     };
-  
     request.onsuccess = function (event) {
         db = event.target.result;
     };
-  
     request.onerror = function () {
         console.error('Failed to open IndexedDB');
     };
