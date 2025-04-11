@@ -61,7 +61,7 @@ export class WebcamPageComponent extends BaseComponent {
                 <button id="startWebcam">Start Camera</button>
                 <button id="captureImage" disabled>Take Photo</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
-                <button id="nextPage" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
+                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
                 </div>
                 
                 <div class="image-preview" id="image-preview" >
@@ -83,7 +83,7 @@ export class WebcamPageComponent extends BaseComponent {
         this.#video = this.#container.querySelector('#webcam-video');
         this.#startButton = this.#container.querySelector('#startWebcam');
         this.#captureButton = this.#container.querySelector('#captureImage');
-        this.#finalizeButton = this.#container.querySelector('#nextPage');
+        this.#finalizeButton = this.#container.querySelector('#finalizePhoto');
         this.#imagePreview = this.#container.querySelector('#image-preview');
         this.#filterSelect = this.#container.querySelector('#filter-select');
         this.#filterOptions = this.#container.querySelector('#filter-options');

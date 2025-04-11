@@ -25,9 +25,8 @@ export class PhotoEditorComponent extends BaseComponent {
   #createContainer() {
     this.#container = document.createElement('div');
 
-
   }
-
+  
   // Sets up the inner HTML of the container
   #setupContainerContent() {
     this.#container.innerHTML = `

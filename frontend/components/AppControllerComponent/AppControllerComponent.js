@@ -47,21 +47,10 @@ export class AppControllerComponent {
 
   // Attaches the necessary event listeners
   #attachEventListeners() {
-    const next = this.#container.querySelector("#nextPage");
-    const prev = this.#container.querySelector("#prevPage");
-    if (next) {
-      next.addEventListener("click", () => {
-        // Go to the next view
-        console.log("next view");
-        this.#currentView = ViewArr[ViewArr.indexOf(Views[this.#currentView]) + 1];
-        this.#renderCurrentView();
-      })
-    }
-    if (prev) {
-      prev.addEventListener("click", () => {
-        // Go to the previous view
-        console.log("prev view");
-        this.#currentView = ViewArr[ViewArr.indexOf(Views[this.#currentView]) - 1];
+    const finalizePhoto = this.#container.querySelector("#finalizePhoto");
+    if (finalizePhoto) {
+      finalizePhoto.addEventListener("click", () => {
+        this.#currentView = Views.PhotoEditPage;
         this.#renderCurrentView();
       })
     }
