@@ -29,7 +29,6 @@
     margin-bottom: 1rem;
 }
 
-
 .search-container {
     position: relative;
 }
@@ -44,7 +43,8 @@
 .ghost-input {
     z-index: 0;
     background: transparent !important;
-=======
+}
+
 /* Image preview section */
 .image-preview {
     margin-top: 2rem;
@@ -115,5 +115,4 @@
     .layout-2x2 .captured-image {
         max-width: calc(50% - 5px);
     }
-
 }
