@@ -1,13 +1,17 @@
 import { NavbarComponent } from '../NavbarComponent/NavbarComponent.js';
+import { WebcamPageComponent } from '../WebcamPageComponent/WebcamPageComponent.js';
+import { Views } from './Views.js';
 
 export class AppControllerComponent {
   #container = null; // Private container for the component
-  #currentView = 'main'; // Track the current view 'Photo'
-  #navbarComponent
+  #currentView = Views.WebcamPage; // Track the current view: 
+  #navbarComponent;
+  #webcamPage
 //   #hub = null; // EventHub instance for managing events
 
   constructor() {
     this.#navbarComponent = new NavbarComponent();
+    this.#webcamPage = new WebcamPageComponent();
   }
 
   // Render the AppController component and return the container
@@ -43,6 +47,7 @@ export class AppControllerComponent {
 
   // Toggles the view
   #toggleView() {
+    
   }
 
   // Renders the current view based on the #currentView state
@@ -51,5 +56,9 @@ export class AppControllerComponent {
     viewContainer.innerHTML = ''; // Clear existing content
 
     viewContainer.appendChild(this.#navbarComponent.render());
+
+    if (this.#currentView === Views.WebcamPage) {
+      viewContainer.appendChild(this.#webcamPage.render());
+    }
   }
 }

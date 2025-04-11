@@ -10,54 +10,6 @@
 <body>
   <div id="app"></div>
 
-  <div class="task-page">
-    <header>
-      <h1>Mobile Booth</h1>
-    </header>
-    
-    <main>
-      <section class="webcam-section">
-        <div class="webcam-container">
-          <video id="webcam-video" class="webcam-video" autoplay playsinline></video>
-          
-          <div class="filter-container">
-            <div class="select-container">
-              <label class="select-label">Filter</label>
-              <div class="select-button" id="filter-select">
-                <span class="select-value">No Filter</span>
-                <span class="select-chevron">▼</span>
-              </div>
-              <div class="select-options" id="filter-options">
-                <div class="select-option selected" data-value="none">No Filter</div>
-                <div class="select-option" data-value="grayscale">Grayscale</div>
-                <div class="select-option" data-value="sepia">Sepia</div>
-                <div class="select-option" data-value="invert">Invert</div>
-                <div class="select-option" data-value="blur">Blur</div>
-                <div class="select-option" data-value="brightness">Brightness</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="webcam-controls">
-            <button id="startWebcam">Start Camera</button>
-            <button id="captureImage" disabled>Take Photo</button>
-            <button id="toggleVideoMode">Toggle Video Mode</button>
-            <button id="finalizePhoto" disabled onclick="location.href='/frontend/post-photo.html'" style="text-decoration: none;">Finalize and Edit Photo</a>
-          </div>
-          
-          <div class="image-preview" id="image-preview" >
-            <img id="captured-image" alt="Captured Image" class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
-            <!-- Share Button -->
-            <button id="shareButton">
-              🌐 Share
-            </button>
-            <!-- share button end -->
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
   <script type="module" src="./js/webcam.js"></script>
   <script type="module" src="./js/main.js"></script>
 </body>
