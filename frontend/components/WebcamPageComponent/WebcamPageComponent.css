@@ -26,3 +26,35 @@
     width: 100%;
     margin-bottom: 1rem;
 }
+
+/* New styles for the image preview section */
+.image-preview {
+    margin-top: 2rem;
+    text-align: center;
+    width: 100%;
+}
+
+.images-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.captured-image {
+    max-width: calc(25% - 8px);
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+}
+
+/* For smaller screens */
+@media (max-width: 480px) {
+    .captured-image {
+        max-width: calc(50% - 8px);
+    }
+}

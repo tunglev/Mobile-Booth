@@ -14,6 +14,8 @@ export class WebcamPageComponent extends BaseComponent {
 	#isActive = false;
 	#currentFilter = 'none';
 	#db = null;
+	#capturedImages = []; // Array to store captured images
+	#maxRecentImages = 4; // Maximum number of recent images to display
 
 	constructor() {
 		super();
@@ -66,11 +68,13 @@ export class WebcamPageComponent extends BaseComponent {
                 <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
                 </div>
                 
-                <div class="image-preview" id="image-preview" >
-                <img id="captured-image" alt="Captured Image" class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
-                <button id="shareButton">
-                    🌐 Share
-                </button>
+                <div class="image-preview" id="image-preview">
+                    <div class="images-row" id="images-row">
+                        <img class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
+                    </div>
+                    <button id="shareButton">
+                        🌐 Share
+                    </button>
                 </div>
             </div>
             </section>
@@ -213,21 +217,50 @@ export class WebcamPageComponent extends BaseComponent {
 			// Convert canvas to data URL
 			const imageDataURL = canvas.toDataURL('image/png');
 
-			// Display the captured image
-			this.#displayCapturedImage(imageDataURL);
+			// Add new image to the array
+			this.#capturedImages.unshift(imageDataURL);
+            
+            // Keep only the most recent images
+            if (this.#capturedImages.length > this.#maxRecentImages) {
+                this.#capturedImages = this.#capturedImages.slice(0, this.#maxRecentImages);
+            }
+
+			// Display the captured images
+			this.#displayCapturedImages();
 		}
 	}
 
-	#displayCapturedImage(imageDataURL) {
-		// Clear previous previews
-		this.#imagePreview.innerHTML = '';
+	#displayCapturedImages() {
+		// Find or create the images row container
+		let imagesRow = this.#container.querySelector('#images-row');
+		if (!imagesRow) {
+			imagesRow = document.createElement('div');
+			imagesRow.id = 'images-row';
+			imagesRow.classList.add('images-row');
+			this.#imagePreview.prepend(imagesRow);
+		}
 
-		// Create and display the image
-		const img = document.createElement('img');
-		img.src = imageDataURL;
-		img.classList.add('captured-image');
-		img.style.userSelect = 'none';
-		this.#imagePreview.appendChild(img);
+		// Clear previous previews
+		imagesRow.innerHTML = '';
+
+		// If no images captured yet, show placeholder
+		if (this.#capturedImages.length === 0) {
+			const img = document.createElement('img');
+			img.src = 'assets/placeholder.jpeg';
+			img.classList.add('captured-image');
+			img.style.userSelect = 'none';
+			imagesRow.appendChild(img);
+			return;
+		}
+
+		// Create and display the images
+		this.#capturedImages.forEach((imageDataURL) => {
+			const img = document.createElement('img');
+			img.src = imageDataURL;
+			img.classList.add('captured-image');
+			img.style.userSelect = 'none';
+			imagesRow.appendChild(img);
+		});
 	}
 
 	#initIndexedDB() {
