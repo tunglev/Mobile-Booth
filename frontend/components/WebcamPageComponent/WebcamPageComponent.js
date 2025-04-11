@@ -190,6 +190,7 @@ export class WebcamPageComponent extends BaseComponent {
         this.#finalizeButton.disabled = false;
     
         const canvas = document.createElement('canvas');
+        canvas.id = "captured-image-canvas";
         const context = canvas.getContext('2d');
     
         // Set canvas dimensions to match video
@@ -208,22 +209,85 @@ export class WebcamPageComponent extends BaseComponent {
             }
     
             // Convert canvas to data URL
-            const imageDataURL = canvas.toDataURL('image/png');
+            // const imageDataURL = canvas.toDataURL('image/png');
+
+            canvas.toBlob( b => {
+                if (b) {
+                    this.#displayCapturedImage(b);
+                } else {
+                    console.error('Failed to get blob from canvas');
+                }
+            }, 'image/png');
+            saveImageToIndexedDB(canvas)
     
             // Display the captured image
-            this.#displayCapturedImage(imageDataURL);
+            
         }
     }
 
-    #displayCapturedImage(imageDataURL) {
+    #displayCapturedImage(blob) {
         // Clear previous previews
         this.#imagePreview.innerHTML = '';
+
+        const urlCreator = window.URL || window.webkitURL;
+        const imgURL = urlCreator.createObjectURL(blob)
     
         // Create and display the image
         const img = document.createElement('img');
-        img.src = imageDataURL;
+        img.src = imgURL;
         img.classList.add('captured-image');
         img.style.userSelect = "none";
         this.#imagePreview.appendChild(img);
     }
+}
+
+
+
+function saveImageToIndexedDB(canvas) {
+    let db;
+    const request = indexedDB.open('ImageDB', 1);
+  
+    request.onupgradeneeded = function (event) {
+        db = event.target.result;
+        db.createObjectStore('images', { keyPath: 'id' });
+    };
+  
+    request.onsuccess = function (event) {
+        db = event.target.result;
+    };
+  
+    request.onerror = function () {
+        console.error('Failed to open IndexedDB');
+    };
+  
+    canvas.toBlob(blob => {
+        if (blob) {
+            saveBlobToIndexedDB(blob, "Captured Image", db);
+        } else {
+            console.error('Failed to get blob from canvas');
+        }
+    }, 'image/png');
+  
+  }
+  
+function saveBlobToIndexedDB(blob, name, db) {
+    const transaction = db.transaction(['images'], 'readwrite');
+    const store = transaction.objectStore('images');
+    const id = Date.now();
+  
+    const imageRecord = {
+        id,
+        name,
+        blob,
+    };
+  
+    const addRequest = store.add(imageRecord);
+  
+    addRequest.onsuccess = function () {
+        console.log('Image blob saved to IndexedDB with ID:', id);
+    };
+  
+    addRequest.onerror = function (e) {
+        console.error('Error saving blob to IndexedDB:', e.target.error);
+    };
 }

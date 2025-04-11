@@ -5,7 +5,7 @@ import { Views, ViewArr } from './Views.js';
 
 export class AppControllerComponent {
   #container = null; // Private container for the component
-  #currentView = Views.WebcamPage; // Track the current view: 
+  #currentView = Views.WebcamPage; // Track the current view. Default is webcam page.
   #navbarComponent;
   #webcamPage;
   #photoEditPage;
@@ -71,6 +71,7 @@ export class AppControllerComponent {
       viewContainer.appendChild(this.#webcamPage.render());
     } else if (this.#currentView === Views.PhotoEditPage) {
       viewContainer.appendChild(this.#photoEditPage.render());
+    } else {
     }
   }
 }
