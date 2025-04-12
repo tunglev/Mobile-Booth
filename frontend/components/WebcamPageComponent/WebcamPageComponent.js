@@ -16,7 +16,8 @@ export class WebcamPageComponent extends BaseComponent {
 	#isActive = false;
 	#currentFilter = 'none';
 	#currentGridLayout = '1x4'; // Default grid layout
-	#db = null;
+	#dbprefs = null;
+	#dbimages = null;
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
 
@@ -26,10 +27,11 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#initIndexedDB();
 	}
 
-	render() {
-		if (this.#container) {
-			return this.#container;
-		}
+    render() {
+        this.#stopWebcam();
+        if (this.#container) {
+            return this.#container;
+        }
 
 		// Create the main container
 		this.#container = document.createElement('webcam-page');
@@ -59,11 +61,11 @@ export class WebcamPageComponent extends BaseComponent {
                     </div>
                     <div class="select-options" id="filter-options">
                     <div class="select-option selected" data-value="none">No Filter</div>
-                    <div class="select-option" data-value="grayscale">Grayscale</div>
-                    <div class="select-option" data-value="sepia">Sepia</div>
-                    <div class="select-option" data-value="invert">Invert</div>
-                    <div class="select-option" data-value="blur">Blur</div>
-                    <div class="select-option" data-value="brightness">Brightness</div>
+                    <div class="select-option filter-option" data-value="grayscale">Grayscale</div>
+                    <div class="select-option filter-option" data-value="sepia">Sepia</div>
+                    <div class="select-option filter-option" data-value="invert">Invert</div>
+                    <div class="select-option filter-option" data-value="blur">Blur</div>
+                    <div class="select-option filter-option" data-value="brightness">Brightness</div>
                     </div>
                 </div>
                 </div>
@@ -87,7 +89,7 @@ export class WebcamPageComponent extends BaseComponent {
                 <button id="startWebcam">Start Camera</button>
                 <button id="captureImage" disabled>Take Photo</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
-                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</a>
+                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
                 </div>
                 
                 <div class="image-preview" id="image-preview">
@@ -106,13 +108,14 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#addOptionsEventListeners();
 		this.#addSearchEventListeners();
 		this.#addGridEventListeners();
+		this.#loadUserPreferences();
 		return this.#container;
 	}
 
 	// filter search
 	#addSearchEventListeners() {
 		const searchInput = this.#container.querySelector('#filter-search');
-		const filterOptions = this.#container.querySelectorAll('.select-option');
+		const filterOptions = this.#container.querySelectorAll('.filter-option');
 		const errorMessage = this.#container.querySelector('#search-error');
 
 		searchInput.addEventListener('input', () => {
@@ -228,7 +231,7 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#addOptionsEventListeners() {
-		const options = this.#container.querySelectorAll('.select-option');
+		const options = this.#container.querySelectorAll('.filter-option');
 		options.forEach((option) => {
 			option.addEventListener('click', () => {
 				// Update selected class
@@ -292,8 +295,6 @@ export class WebcamPageComponent extends BaseComponent {
 			}
 		} else {
 			this.#stopWebcam();
-			this.#startButton.textContent = 'Start Camera';
-			this.#captureButton.disabled = true;
 		}
 	}
 
@@ -302,8 +303,15 @@ export class WebcamPageComponent extends BaseComponent {
 			this.#stream.getTracks().forEach((track) => track.stop());
 			this.#stream = null;
 		}
-
-		this.#video.srcObject = null;
+        if (this.#video) {
+            this.#video.srcObject = null;
+        }
+        if (this.#startButton) {
+            this.#startButton.textContent = 'Start Camera';
+        }
+        if (this.#captureButton) {
+            this.#captureButton.disabled = true;
+        }
 		this.#isActive = false;
 	}
 
@@ -393,6 +401,7 @@ export class WebcamPageComponent extends BaseComponent {
 
 			// Display the captured images
 			this.#displayCapturedImages();
+            this.#saveImage(canvas);
 		}
 	}
 
@@ -430,31 +439,57 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#initIndexedDB() {
-		const request = indexedDB.open('MobileBoothDB', 1);
+		const request = indexedDB.open('MobileBoothDB', 5);
 
 		request.onerror = (event) => {
 			console.error('IndexedDB error:', event.target.error);
 		};
 
 		request.onupgradeneeded = (event) => {
+			console.log("upgradeneeded")
 			const db = event.target.result;
-
 			// Create an object store for user preferences if it doesn't exist
 			if (!db.objectStoreNames.contains('userPreferences')) {
+                console.log("created prefs db");
 				db.createObjectStore('userPreferences', { keyPath: 'id' });
-			}
+			} else {
+                console.log("prefs db already exists");
+            }
 		};
 
 		request.onsuccess = (event) => {
-			this.#db = event.target.result;
+			this.#dbprefs = event.target.result;
+			this.#loadUserPreferences();
+		};
+		///////////////////////////////////////////////////////
+		const request2 = indexedDB.open('ImageDB', 5);
+
+		request2.onerror = (event) => {
+			console.error('IndexedDB error:', event.target.error);
+		};
+
+		request2.onupgradeneeded = (event) => {
+			console.log("upgradeneeded");
+			const db = event.target.result;
+            // Create an object store for saved images if it doesn't exist
+            if (!db.objectStoreNames.contains('images')) {
+                console.log("created images db");
+                db.createObjectStore('images', { keyPath: 'id' });
+            } else {
+                console.log("images db already exists");
+            }
+		};
+
+		request2.onsuccess = (event) => {
+			this.#dbimages = event.target.result;
 			this.#loadUserPreferences();
 		};
 	}
 
 	#loadUserPreferences() {
-		if (!this.#db) return;
+		if (!this.#dbprefs) return;
 
-		const transaction = this.#db.transaction(['userPreferences'], 'readonly');
+		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readonly');
 		const store = transaction.objectStore('userPreferences');
 
 		// Load filter preference
@@ -527,9 +562,9 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#saveFilterPreference(filter) {
-		if (!this.#db) return;
+		if (!this.#dbprefs) return;
 
-		const transaction = this.#db.transaction(['userPreferences'], 'readwrite');
+		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readwrite');
 		const store = transaction.objectStore('userPreferences');
 
 		store.put({
@@ -543,9 +578,9 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#saveGridPreference(layout) {
-		if (!this.#db) return;
+		if (!this.#dbprefs) return;
 
-		const transaction = this.#db.transaction(['userPreferences'], 'readwrite');
+		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readwrite');
 		const store = transaction.objectStore('userPreferences');
 
 		store.put({
@@ -557,4 +592,37 @@ export class WebcamPageComponent extends BaseComponent {
 			console.error('Error saving grid preference:', event.target.error);
 		};
 	}
+
+    #saveImage(canvas) {
+        canvas.toBlob(blob => {
+            if (blob) {
+				console.log(this.#dbimages);
+                saveBlobToIndexedDB(blob, "Captured Image", this.#dbimages);
+            } else {
+                console.error('Failed to get blob from canvas');
+            }
+        }, 'image/png');
+    }
+}
+  
+function saveBlobToIndexedDB(blob, name, db) {
+    const transaction = db.transaction(['images'], 'readwrite');
+    const store = transaction.objectStore('images');
+    const id = Date.now();
+  
+    const imageRecord = {
+        id,
+        name,
+        blob,
+    };
+  
+    const addRequest = store.add(imageRecord);
+  
+    addRequest.onsuccess = function () {
+        console.log('Image blob saved to IndexedDB with ID:', id);
+    };
+  
+    addRequest.onerror = function (e) {
+        console.error('Error saving blob to IndexedDB:', e.target.error);
+    };
 }
