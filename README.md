@@ -19,6 +19,10 @@ A fun way to create memories and share them.
 
 https://docs.google.com/presentation/d/1Ei-WO3MWebUHZTFe2BJRvO38NK1RzmhxfQJkG98RgNE/edit?usp=sharing
 
+## Milestone 5 Slide Deck
+
+https://docs.google.com/presentation/d/1GZth7Kz0RguV5insxW_mbFpK-kVpYjB2K2_SoKhZJE8/edit?usp=sharing
+
 ## 🧑‍💻 Team Members
 
 ### Jack Hudson
