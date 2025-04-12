@@ -57,6 +57,8 @@ Role: Connector
 Completed Issues:
 - FAQ and About Us Pages #18
 - Research about roles and assign proper responsibility for Mihir Nagarkatti on README.md #7
+- Photo Editor #62 (mostly done but some features missing)
+- General component implementations (not connected to specific issue)
 
 Planned/Ongoing Issues: 
 - Integrating AI with Custom Backgrounds #16
