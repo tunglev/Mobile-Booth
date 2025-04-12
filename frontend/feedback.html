@@ -8,58 +8,21 @@
 </head>
 <body>
     <div id="app"></div>
-
-    <div class="login-page">
-        <div class="login-container">
-            <h2>Feedback Form</h2>
-            <form class="feedback-form">
-                <div class="form-group">
-                    <input type="text" placeholder="Your Name" class="form-input">
-                </div>
-                <div class="form-group">
-                    <input type="email" placeholder="Your Email" class="form-input">
-                </div>
-                <div class="form-group">
-                    <textarea placeholder="Your Feedback" class="form-textarea" rows="5"></textarea>
-                </div>
-                <button type="submit" class="submit-button">Submit Feedback</button>
-            </form>
-        </div>
-    </div>
-
-    <style>
-        /* Only keeping styles that aren't available in styles.css */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            color: #333;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-input:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .submit-button {
-            width: 100%;
-            margin-top: 1rem;
-        }
-    </style>
-    <script type="module" src="./js/main.js"></script>
+    <script type="module">
+        import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
+        import { FeedbackComponent } from './components/FeedbackComponent/FeedbackComponent.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = document.getElementById('app');
+            
+            // Add navbar
+            const navbar = new NavbarComponent();
+            app.appendChild(navbar.render());
+            
+            // Add feedback form
+            const feedbackComponent = new FeedbackComponent();
+            app.appendChild(feedbackComponent.render());
+        });
+    </script>
 </body>
 </html>
