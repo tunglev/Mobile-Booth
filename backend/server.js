@@ -1,5 +1,8 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
+const photosRoutes = require('./routes/photos');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,6 +11,10 @@ app.use((req, res, next) => {
     console.log(`Middleware: req: ${req}, res: ${res}`);
     next();
 });
+
+app.use(bodyParser.json())
+
+app.use('/photos', photosRoutes);
 
 // Serve static files from the "client" directory
 app.use(express.static(path.join(__dirname, '../frontend')));
@@ -24,5 +31,5 @@ app.listen(PORT, () => {
 });
 
 
-// here goes some app.get, app.post, app.put, app.deleete statements here
+// here goes some app.get, app.post, app.put, app.delete statements here
 // OR use express.Router() and split server.js into multiple files for organization
