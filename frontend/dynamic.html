@@ -69,52 +69,51 @@
 </head>
 
 <body>
-    <nav class="navbar">
-        <a href="home.html" id="home">Home</a>
-        <ul id="menu">
-            <li><a href="login.html" id="login">Log In</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
-            <li><a href="dynamic.html">Dynamic</a></li>
-        </ul>
-    </nav>
+    <div id="app"></div>
     <div class="screen-indicator">
         <span class="dot active" data-screen="1"></span>
         <span class="dot" data-screen="2"></span>
         <span class="dot" data-screen="3"></span>
     </div>
 
-        <div class="screen active" id="screen1">
-            <h2>Screen 1 - Home screen</h2>
-            <p>hello</p>
-        </div>
-        
-        <div class="screen" id="screen2">
-            <h2>Screen 2 - capture countdown screen</h2>
-            <p>Welcome to the second screen! Here you can see different content.</p>
-            <p>Mobile Booth allows you to capture memories with friends and family at any event.</p>
-            <ul>
-                <li>Easy to set up</li>
-                <li>Customizable templates</li>
-                <li>Instant sharing options</li>
-            </ul>
-        </div>
-        
-        <div class="screen" id="screen3">
-            <h2>Screen 3 - Post capture screen</h2>
-            <p>This is the final screen in our demonstration.</p>
-            <p>Thank you for exploring our dynamic content example! Ready to get started with Mobile Booth?</p>
-            <p>Contact us today to learn more about our services.</p>
-        </div>
-        
-        <div class="nav-buttons">
-            <button id="prevBtn" disabled>Previous</button>
-            <button id="nextBtn">Next</button>
-        </div>
-        
+    <div class="screen active" id="screen1">
+        <h2>Screen 1 - Home screen</h2>
+        <p>hello</p>
+    </div>
+    
+    <div class="screen" id="screen2">
+        <h2>Screen 2 - capture countdown screen</h2>
+        <p>Welcome to the second screen! Here you can see different content.</p>
+        <p>Mobile Booth allows you to capture memories with friends and family at any event.</p>
+        <ul>
+            <li>Easy to set up</li>
+            <li>Customizable templates</li>
+            <li>Instant sharing options</li>
+        </ul>
+    </div>
+    
+    <div class="screen" id="screen3">
+        <h2>Screen 3 - Post capture screen</h2>
+        <p>This is the final screen in our demonstration.</p>
+        <p>Thank you for exploring our dynamic content example! Ready to get started with Mobile Booth?</p>
+        <p>Contact us today to learn more about our services.</p>
+    </div>
+    
+    <div class="nav-buttons">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn">Next</button>
     </div>
 
+    <script type="module">
+        import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = document.getElementById('app');
+
+            const navbar = new NavbarComponent();
+            app.appendChild(navbar.render());
+        });
+    </script>
     <script type="module" src="js/dynamicContent.js"></script>
 </body>
 

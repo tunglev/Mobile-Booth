@@ -81,13 +81,19 @@ export class SettingsComponent extends BaseComponent {
             theme: formData.get('theme'),
             language: formData.get('language'),
         };
-
+    
         try {
             const response = await fetch('/settings', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(settingsData),
             });
+    
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+    
             const result = await response.json();
             this.#showStatusMessage(result.message || 'Settings updated successfully!', 'success');
         } catch (error) {
