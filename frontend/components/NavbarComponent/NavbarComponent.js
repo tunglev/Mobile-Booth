@@ -13,8 +13,7 @@ export class NavbarComponent extends BaseComponent {
     this.#container = document.createElement('nav');
     this.#container.classList.add('navbar');
 
-    // Render the task text
-
+    // Render the navbar links
     this.#container.innerHTML = `
     <a href="home.html" id="home">Home</a>
     <ul id="menu">
@@ -23,7 +22,8 @@ export class NavbarComponent extends BaseComponent {
         <li><a href="about.html">About Us</a></li>
         <li><a href="feedback.html">Feedback</a></li>
         <li><a href="dynamic.html">Dynamic</a></li>
-    </ul>`
+        <li><a href="settings.html">Settings</a></li>
+    </ul>`;
 
     return this.#container;
   }

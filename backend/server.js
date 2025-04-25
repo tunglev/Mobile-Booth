@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const photosRoutes = require('./routes/photos');
-
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +15,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 
 app.use('/photos', photosRoutes);
+app.use('/settings', settingsRoutes);
 
 // Serve static files from the "client" directory
 app.use(express.static(path.join(__dirname, '../frontend')));

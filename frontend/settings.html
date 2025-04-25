@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module">
+        import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
+        import { SettingsComponent } from './components/SettingsComponent/SettingsComponent.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const app = document.getElementById('app');
+
+            // Add navbar
+            const navbar = new NavbarComponent();
+            app.appendChild(navbar.render());
+
+            // Add settings component
+            const settingsComponent = new SettingsComponent();
+            app.appendChild(settingsComponent.render());
+        });
+    </script>
+</body>
+</html>
