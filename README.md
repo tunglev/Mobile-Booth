@@ -23,6 +23,10 @@ https://docs.google.com/presentation/d/1Ei-WO3MWebUHZTFe2BJRvO38NK1RzmhxfQJkG98R
 
 https://docs.google.com/presentation/d/1GZth7Kz0RguV5insxW_mbFpK-kVpYjB2K2_SoKhZJE8/edit?usp=sharing
 
+## Milestone 6 Slide Deck
+
+https://docs.google.com/presentation/d/1XQnVO3VHVI8f4AiaImCHIrJd9O0pT8Jtk4PDwO47KIU/edit?usp=sharing
+
 ## 🧑‍💻 Team Members
 
 ### Jack Hudson
@@ -63,7 +67,10 @@ Completed Issues:
 - Research about roles and assign proper responsibility for Mihir Nagarkatti on README.md #7
 - Photo Editor #62 (mostly done but some features missing)
 - General component implementations (not connected to specific issue)
+- Photo Storage in JSON #85
 
 Planned/Ongoing Issues: 
-- Integrating AI with Custom Backgrounds #16
+- Integrating AI with Custom Backgrounds #1
 - Organize Meetings and Connect Teammates #17
+- Make Photo Storage and Photo Editor look prettier #92
+
