@@ -1,4 +1,4 @@
 {
-  "filter": "blur",
-  "gridSize": "4x1"
+  "filter": "grayscale",
+  "gridSize": "2x2"
 }

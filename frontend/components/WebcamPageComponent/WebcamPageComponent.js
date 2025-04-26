@@ -233,7 +233,9 @@ export class WebcamPageComponent extends BaseComponent {
 	#addOptionsEventListeners() {
 		const options = this.#container.querySelectorAll('.filter-option');
 		options.forEach((option) => {
-			option.addEventListener('click', () => {
+			option.addEventListener('click', (event) => { // Add event parameter
+				event.preventDefault(); // Prevent default action
+
 				// Update selected class
 				options.forEach((opt) => opt.classList.remove('selected'));
 				option.classList.add('selected');
@@ -256,7 +258,9 @@ export class WebcamPageComponent extends BaseComponent {
 	#addGridEventListeners() {
 		const options = this.#container.querySelectorAll('#grid-options .select-option');
 		options.forEach((option) => {
-			option.addEventListener('click', () => {
+			option.addEventListener('click', (event) => { // Add event parameter
+				event.preventDefault(); // Prevent default action
+
 				// Update selected class
 				options.forEach((opt) => opt.classList.remove('selected'));
 				option.classList.add('selected');
