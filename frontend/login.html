@@ -8,15 +8,7 @@
   <title>Login - Group 15 Mobile Booth</title>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="home.html" id="home">Home</a>
-        <ul id="menu">
-            <li><a href="login.html" id="login">Log In</a></li>
-            <li><a href="faq.html">FAQ</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
-        </ul>
-    </nav>
+  <div id="app"></div>
 
   <div class="login-page">
     <div class="login-container">
@@ -26,12 +18,19 @@
     </div>
   </div>
 
-  <script>
-    // Simple login simulation
+  <script type="module">
+    import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const app = document.getElementById('app');
+      const navbar = new NavbarComponent();
+      app.appendChild(navbar.render());
+    });
+
     document.getElementById('sign-in-button').addEventListener('click', function() {
       alert('This would connect to a real authentication service in a production environment.');
       window.location.href = 'home.html';
     });
   </script>
 </body>
-</html> 
+</html>
