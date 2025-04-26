@@ -16,7 +16,7 @@ export class WebcamPageComponent extends BaseComponent {
 	#isActive = false;
 	#currentFilter = 'none';
 	#currentGridLayout = '1x4'; // Default grid layout
-	#dbprefs = null;
+	#dbprefs = null; // Keep for potential other uses or future refactor, but logic will bypass it for filter/grid
 	#dbimages = null;
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
@@ -24,7 +24,8 @@ export class WebcamPageComponent extends BaseComponent {
 	constructor() {
 		super();
 		this.loadCSS('WebcamPageComponent');
-		this.#initIndexedDB();
+		this.#initIndexedDB(); // Keep this, it initializes image DB too
+		this.#loadPreferencesFromServer(); // Load from server instead of local
 	}
 
     render() {
@@ -108,7 +109,6 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#addOptionsEventListeners();
 		this.#addSearchEventListeners();
 		this.#addGridEventListeners();
-		this.#loadUserPreferences();
 		return this.#container;
 	}
 
@@ -244,7 +244,7 @@ export class WebcamPageComponent extends BaseComponent {
 				// Apply filter
 				const filter = option.getAttribute('data-value');
 				this.#applyFilter(filter);
-				this.#saveFilterPreference(filter);
+				this.#updatePreferencesOnServer({ filter }); // Save to server
 
 				// Close dropdown
 				this.#filterOptions.classList.remove('active');
@@ -267,7 +267,7 @@ export class WebcamPageComponent extends BaseComponent {
 				// Apply grid layout
 				const layout = option.getAttribute('data-value');
 				this.#applyGridLayout(layout);
-				this.#saveGridPreference(layout);
+				this.#updatePreferencesOnServer({ gridSize: layout }); // Save to server
 
 				// Close dropdown
 				this.#gridOptions.classList.remove('active');
@@ -349,6 +349,18 @@ export class WebcamPageComponent extends BaseComponent {
 				this.#video.style.filter = 'brightness(150%)';
 				break;
 		}
+
+		// Update UI dropdown display after applying
+		if (this.#container && this.#filterSelect) {
+			const options = this.#container.querySelectorAll('#filter-options .select-option');
+			options.forEach((option) => {
+				const isSelected = option.getAttribute('data-value') === filter;
+				option.classList.toggle('selected', isSelected);
+				if (isSelected) {
+					this.#filterSelect.querySelector('.select-value').textContent = option.textContent;
+				}
+			});
+		}
 	}
 
 	#applyGridLayout(layout) {
@@ -364,6 +376,18 @@ export class WebcamPageComponent extends BaseComponent {
 
 		// Re-display images with new layout
 		this.#displayCapturedImages();
+
+		// Update UI dropdown display after applying
+		if (this.#container && this.#gridSelect) {
+			const options = this.#container.querySelectorAll('#grid-options .select-option');
+			options.forEach((option) => {
+				const isSelected = option.getAttribute('data-value') === layout;
+				option.classList.toggle('selected', isSelected);
+				if (isSelected) {
+					this.#gridSelect.querySelector('.select-value').textContent = option.textContent;
+				}
+			});
+		}
 	}
 
 	#captureImage() {
@@ -439,16 +463,17 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#initIndexedDB() {
+		// This function now primarily ensures the ImageDB is set up.
+		// The MobileBoothDB (prefs) part remains but isn't used by the preference methods anymore.
 		const request = indexedDB.open('MobileBoothDB', 5);
 
 		request.onerror = (event) => {
-			console.error('IndexedDB error:', event.target.error);
+			console.error('IndexedDB error (MobileBoothDB):', event.target.error);
 		};
 
 		request.onupgradeneeded = (event) => {
-			console.log("upgradeneeded")
+			console.log("upgradeneeded for MobileBoothDB")
 			const db = event.target.result;
-			// Create an object store for user preferences if it doesn't exist
 			if (!db.objectStoreNames.contains('userPreferences')) {
                 console.log("created prefs db");
 				db.createObjectStore('userPreferences', { keyPath: 'id' });
@@ -458,20 +483,20 @@ export class WebcamPageComponent extends BaseComponent {
 		};
 
 		request.onsuccess = (event) => {
-			this.#dbprefs = event.target.result;
-			this.#loadUserPreferences();
+			this.#dbprefs = event.target.result; // Store the DB handle
+			// No longer call #loadUserPreferences here
 		};
+
 		///////////////////////////////////////////////////////
 		const request2 = indexedDB.open('ImageDB', 5);
 
 		request2.onerror = (event) => {
-			console.error('IndexedDB error:', event.target.error);
+			console.error('IndexedDB error (ImageDB):', event.target.error);
 		};
 
 		request2.onupgradeneeded = (event) => {
-			console.log("upgradeneeded");
+			console.log("upgradeneeded for ImageDB");
 			const db = event.target.result;
-            // Create an object store for saved images if it doesn't exist
             if (!db.objectStoreNames.contains('images')) {
                 console.log("created images db");
                 db.createObjectStore('images', { keyPath: 'id' });
@@ -481,126 +506,81 @@ export class WebcamPageComponent extends BaseComponent {
 		};
 
 		request2.onsuccess = (event) => {
-			this.#dbimages = event.target.result;
-			this.#loadUserPreferences();
+			this.#dbimages = event.target.result; // Store the DB handle for images
+			// No longer call #loadUserPreferences here
 		};
 	}
 
-	#loadUserPreferences() {
-		if (!this.#dbprefs) return;
-
-		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readonly');
-		const store = transaction.objectStore('userPreferences');
-
-		// Load filter preference
-		const filterRequest = store.get('filterPreference');
-		filterRequest.onsuccess = (event) => {
-			if (event.target.result) {
-				const { filter } = event.target.result;
-				this.#currentFilter = filter;
-
-				// Apply the saved filter once the component is rendered
-				setTimeout(() => {
-					if (this.#container) {
-						// Update the UI to reflect the saved filter
-						const options = this.#container.querySelectorAll('#filter-options .select-option');
-						options.forEach((option) => {
-							if (option.getAttribute('data-value') === filter) {
-								// Update the selected class
-								options.forEach((opt) => opt.classList.remove('selected'));
-								option.classList.add('selected');
-
-								// Update display text
-								if (this.#filterSelect) {
-									this.#filterSelect.querySelector('.select-value').textContent = option.textContent;
-								}
-
-								// Apply the filter
-								this.#applyFilter(filter);
-							}
-						});
-					}
-				}, 0);
+	// Add methods for server communication
+	async #loadPreferencesFromServer() {
+		try {
+			const response = await fetch('http://localhost:3000/preferences'); // Add full URL
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
 			}
-		};
+			const prefs = await response.json();
+			console.log('Loaded preferences from server:', prefs);
 
-		// Load grid layout preference
-		const gridRequest = store.get('gridPreference');
-		gridRequest.onsuccess = (event) => {
-			if (event.target.result) {
-				const { layout } = event.target.result;
-				this.#currentGridLayout = layout;
+			// Apply preferences after a short delay to ensure DOM is ready
+			setTimeout(() => {
+				if (prefs.filter) {
+					this.#applyFilter(prefs.filter);
+				}
+				if (prefs.gridSize) {
+					this.#applyGridLayout(prefs.gridSize);
+				}
+			}, 100); // Small delay might be needed
 
-				// Apply the saved grid layout once the component is rendered
-				setTimeout(() => {
-					if (this.#container) {
-						// Update the UI to reflect the saved grid layout
-						const options = this.#container.querySelectorAll('#grid-options .select-option');
-						options.forEach((option) => {
-							if (option.getAttribute('data-value') === layout) {
-								// Update the selected class
-								options.forEach((opt) => opt.classList.remove('selected'));
-								option.classList.add('selected');
+		} catch (error) {
+			console.error('Error loading preferences from server:', error);
+			// Apply default preferences if loading fails
+			setTimeout(() => {
+				this.#applyFilter(this.#currentFilter); // Apply default filter
+				this.#applyGridLayout(this.#currentGridLayout); // Apply default grid layout
+			}, 100);
+		}
+	}
 
-								// Update display text
-								if (this.#gridSelect) {
-									this.#gridSelect.querySelector('.select-value').textContent = option.textContent;
-								}
+	async #updatePreferencesOnServer(prefsToUpdate) {
+		try {
+			const response = await fetch('http://localhost:3000/preferences', { // Add full URL
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(prefsToUpdate),
+			});
 
-								// Apply the grid layout
-								this.#applyGridLayout(layout);
-							}
-						});
-					}
-				}, 0);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
 			}
-		};
 
-		filterRequest.onerror = gridRequest.onerror = (event) => {
-			console.error('Error loading user preferences:', event.target.error);
-		};
-	}
+			const result = await response.json();
+			console.log('Preferences updated on server:', result.preferences);
 
-	#saveFilterPreference(filter) {
-		if (!this.#dbprefs) return;
+			// Update local state immediately (optional, but good practice)
+			if (prefsToUpdate.filter !== undefined) {
+				this.#currentFilter = prefsToUpdate.filter;
+			}
+			if (prefsToUpdate.gridSize !== undefined) {
+				this.#currentGridLayout = prefsToUpdate.gridSize;
+			}
 
-		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readwrite');
-		const store = transaction.objectStore('userPreferences');
-
-		store.put({
-			id: 'filterPreference',
-			filter: filter,
-		});
-
-		transaction.onerror = (event) => {
-			console.error('Error saving filter preference:', event.target.error);
-		};
-	}
-
-	#saveGridPreference(layout) {
-		if (!this.#dbprefs) return;
-
-		const transaction = this.#dbprefs.transaction(['userPreferences'], 'readwrite');
-		const store = transaction.objectStore('userPreferences');
-
-		store.put({
-			id: 'gridPreference',
-			layout: layout,
-		});
-
-		transaction.onerror = (event) => {
-			console.error('Error saving grid preference:', event.target.error);
-		};
+		} catch (error) {
+			console.error('Error updating preferences on server:', error);
+		}
 	}
 
     #saveImage(canvas) {
         canvas.toBlob(blob => {
-            if (blob) {
-				console.log(this.#dbimages);
+            if (blob && this.#dbimages) { // Check if image DB is ready
+				console.log('Saving image to IndexedDB:', this.#dbimages);
                 saveBlobToIndexedDB(blob, "Captured Image", this.#dbimages);
-            } else {
+            } else if (!blob) {
                 console.error('Failed to get blob from canvas');
-            }
+            } else if (!this.#dbimages) {
+				console.error('ImageDB not initialized, cannot save image.');
+			}
         }, 'image/png');
     }
 }
