@@ -15,6 +15,7 @@ export class AppControllerComponent {
   #finalizeListenerSet = false;
   #backToCameraListenerSet = false;
   #seeAndShareListenerSet = false;
+  #backToPhotoEditorListenerSet = false;
 //   #hub = null; // EventHub instance for managing events
 
   constructor() {
@@ -81,6 +82,19 @@ export class AppControllerComponent {
         this.#attachEventListeners();
       })
     }
+
+    const backToPhotoEditor = this.#container.querySelector("#backToPhotoEditor");
+    if (backToPhotoEditor && !this.#backToPhotoEditorListenerSet) {
+      backToPhotoEditor.addEventListener("click", () => {
+        console.log("back to photo editor");
+        // TODO: Fix this
+        this.#currentView = ViewArr.PhotoEditPage;
+        this.#renderCurrentView();
+        this.#backToPhotoEditorListenerSet = true; //so we don't keep adding event listeners
+        this.#attachEventListeners();
+      })
+    }
+
   }
 
   // Toggles the view

@@ -8,7 +8,6 @@ export class PhotoEditorComponent extends BaseComponent {
   #captionInput = null;
   #canvas = null;
   #saveButton = null;
-  #seePhotosButton = null;
 
   constructor() {
     super();
@@ -67,17 +66,12 @@ export class PhotoEditorComponent extends BaseComponent {
     this.#saveButton.addEventListener('click', () => {
       this.#savePhotoToDatabase();
     })
-
-    this.#seePhotosButton.addEventListener('click', () => {
-
-    })
   }
 
   #initializeProperties() {
     this.#captionInput = this.#container.querySelector("#captionInput");
     this.#canvas = this.#container.querySelector("#editor");
     this.#saveButton = this.#container.querySelector("#saveInDatabase");
-    this.#seePhotosButton = this.#container.querySelector("#seePhotos");
   }
 
   #getAndShowPhoto() {

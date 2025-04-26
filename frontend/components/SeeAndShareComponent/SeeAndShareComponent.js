@@ -2,8 +2,8 @@ import { BaseComponent } from "../BaseComponent/BaseComponent.js";
 
 export class SeeAndShareComponent extends BaseComponent {
   #container = null;
-  #getPhotoButton;
-  #deletePhotoButton;
+//   #getPhotoButton;
+//   #deletePhotoButton;
 
   constructor() {
     super();
@@ -18,6 +18,7 @@ export class SeeAndShareComponent extends BaseComponent {
       this.#initializeProperties();
       this.#attachEventListeners();
     }
+    this.#getPhotosFromJsonFile();
     return this.#container;
   }
 
@@ -29,23 +30,20 @@ export class SeeAndShareComponent extends BaseComponent {
   // Sets up the inner HTML of the container
   #setupContainerContent() {
     this.#container.innerHTML = `
-        <h1>See your photos And Share them!</h1>
-
-        <button id="getPhoto">Get Most Recent Photo</button>
-        <button id="deletePhoto" disabled>Get Most Recent Photo</button>
+        <h1>Manage your photos. (Sharing coming soon!)</h1>
+        <button id="backToPhotoEditor">Go back to Photo Editor</button>
     `;
   }
 
   // Attaches the event listeners for the component
   #attachEventListeners() {
-    this.#getPhotoButton.addEventListener("click", () => {});
-
-    this.#deletePhotoButton.addEventListener("click", () => {});
+    // this.#getPhotoButton.addEventListener("click", () => {});
+    // this.#deletePhotoButton.addEventListener("click", () => {});
   }
 
   #initializeProperties() {
-    this.#getPhotoButton = this.#container.querySelector("#getPhoto");
-    this.#deletePhotoButton = this.#container.querySelector("#deletePhoto");
+    // this.#getPhotoButton = this.#container.querySelector("#getPhoto");
+    // this.#deletePhotoButton = this.#container.querySelector("#deletePhoto");
   }
 
   getContainer() {
@@ -57,7 +55,8 @@ export class SeeAndShareComponent extends BaseComponent {
     fetch("/photos/")
       .then((res) => res.json())
       .then((data) => {
-        data.foreach((photo) => {
+        console.log(data);
+        data.forEach((photo) => {
           const canvas = document.createElement("canvas");
           canvas.width = 300;
           canvas.height = 200;
@@ -87,19 +86,15 @@ export class SeeAndShareComponent extends BaseComponent {
         });
       });
   }
-
-  #deletePhotoFromJsonFile() {
-    // fetch DELETE
-  }
 }
 
-function drawBase64ToCanvas(base64, canvas) {
-  const img = new Image();
-  img.onload = () => {
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-  };
-  img.src = base64;
-}
+// function drawBase64ToCanvas(base64, canvas) {
+//   const img = new Image();
+//   img.onload = () => {
+//     canvas.width = img.width;
+//     canvas.height = img.height;
+//     const ctx = canvas.getContext("2d");
+//     ctx.drawImage(img, 0, 0);
+//   };
+//   img.src = base64;
+// }
