@@ -2,36 +2,11 @@ import { BaseComponent } from '../BaseComponent/BaseComponent.js';
 
 export class FeedbackComponent extends BaseComponent {
     #container = null;
-    #db = null;
-    #storeName = 'feedbacks';
-    #dbName = 'FeedbackDB';
+    #apiBaseUrl = '/feedback';
 
     constructor() {
         super();
         this.loadCSS('FeedbackComponent');
-        this.initializeDB();
-    }
-
-    async initializeDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.#dbName, 1);
-
-            request.onerror = () => reject(new Error('Failed to open database'));
-
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                if (!db.objectStoreNames.contains(this.#storeName)) {
-                    const store = db.createObjectStore(this.#storeName, { keyPath: 'id', autoIncrement: true });
-                    store.createIndex('email', 'email', { unique: false });
-                    store.createIndex('timestamp', 'timestamp', { unique: false });
-                }
-            };
-
-            request.onsuccess = (event) => {
-                this.#db = event.target.result;
-                resolve();
-            };
-        });
     }
 
     render() {
@@ -142,15 +117,19 @@ export class FeedbackComponent extends BaseComponent {
         };
 
         try {
-            const transaction = this.#db.transaction([this.#storeName], 'readwrite');
-            const store = transaction.objectStore(this.#storeName);
-            
-            await new Promise((resolve, reject) => {
-                const request = store.add(feedbackData);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(new Error('Failed to save feedback'));
+            const response = await fetch(this.#apiBaseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(feedbackData)
             });
 
+            if (!response.ok) {
+                throw new Error('Failed to submit feedback');
+            }
+
+            const result = await response.json();
             this.#showNotification('Feedback submitted successfully!', 'success');
             this.#resetForm();
             await this.#loadFeedbackHistory();
@@ -192,29 +171,26 @@ export class FeedbackComponent extends BaseComponent {
         historyList.innerHTML = '';
 
         try {
-            const transaction = this.#db.transaction([this.#storeName], 'readonly');
-            const store = transaction.objectStore(this.#storeName);
-            const request = store.index('timestamp').openCursor(null, 'prev');
+            const response = await fetch(this.#apiBaseUrl);
+            if (!response.ok) {
+                throw new Error('Failed to load feedback history');
+            }
 
-            request.onsuccess = (event) => {
-                const cursor = event.target.result;
-                if (cursor) {
-                    const feedback = cursor.value;
-                    const element = document.createElement('div');
-                    element.classList.add('feedback-entry');
-                    element.innerHTML = `
-                        <div class="feedback-header">
-                            <strong>${feedback.name}</strong>
-                            <span class="feedback-date">
-                                ${new Date(feedback.timestamp).toLocaleString()}
-                            </span>
-                        </div>
-                        <div class="feedback-content">${feedback.feedback}</div>
-                    `;
-                    historyList.appendChild(element);
-                    cursor.continue();
-                }
-            };
+            const feedbacks = await response.json();
+            feedbacks.forEach(feedback => {
+                const element = document.createElement('div');
+                element.classList.add('feedback-entry');
+                element.innerHTML = `
+                    <div class="feedback-header">
+                        <strong>${feedback.name}</strong>
+                        <span class="feedback-date">
+                            ${new Date(feedback.timestamp).toLocaleString()}
+                        </span>
+                    </div>
+                    <div class="feedback-content">${feedback.feedback}</div>
+                `;
+                historyList.appendChild(element);
+            });
         } catch (error) {
             console.error('Error loading feedback history:', error);
             this.#showNotification('Failed to load feedback history.', 'error');

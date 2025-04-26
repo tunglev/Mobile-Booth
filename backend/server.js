@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors'); // Import cors
 const photosRoutes = require('./routes/photos');
+const feedbackRoutes = require('./routes/feedback');
 
 const settingsRoutes = require('./routes/settings');
 const userPreferenceRoutes = require('./routes/userPreference'); // Import user preference routes
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 
 app.use('/photos', photosRoutes);
+app.use('/feedback', feedbackRoutes);
 
 app.use('/settings', settingsRoutes);
 
