@@ -1,5 +1,6 @@
 import { NavbarComponent } from '../NavbarComponent/NavbarComponent.js';
 import { PhotoEditorComponent } from '../PhotoEditorComponent/PhotoEditorComponent.js';
+import { SeeAndShareComponent } from '../SeeAndShareComponent/SeeAndShareComponent.js';
 import { WebcamPageComponent } from '../WebcamPageComponent/WebcamPageComponent.js';
 import { Views, ViewArr } from './Views.js';
 
@@ -9,14 +10,18 @@ export class AppControllerComponent {
   #navbarComponent;
   #webcamPage;
   #photoEditPage;
+  #seeAndSharePage;
+  
   #finalizeListenerSet = false;
   #backToCameraListenerSet = false;
+  #seeAndShareListenerSet = false;
 //   #hub = null; // EventHub instance for managing events
 
   constructor() {
     this.#navbarComponent = new NavbarComponent();
     this.#webcamPage = new WebcamPageComponent();
     this.#photoEditPage = new PhotoEditorComponent();
+    this.#seeAndSharePage = new SeeAndShareComponent();
   }
 
   // Render the AppController component and return the container
@@ -66,6 +71,16 @@ export class AppControllerComponent {
         this.#attachEventListeners();
       })
     }
+
+    const seeAndShare = this.#container.querySelector("#seeAndShare");
+    if (seeAndShare && !this.#seeAndShareListenerSet) {
+      seeAndShare.addEventListener("click", () => {
+        this.#currentView = Views.SeeAndSharePage;
+        this.#renderCurrentView();
+        this.#seeAndShareListenerSet = true; //so we don't keep adding event listeners
+        this.#attachEventListeners();
+      })
+    }
   }
 
   // Toggles the view
@@ -86,7 +101,8 @@ export class AppControllerComponent {
       viewContainer.appendChild(this.#webcamPage.render());
     } else if (this.#currentView === Views.PhotoEditPage) {
       viewContainer.appendChild(this.#photoEditPage.render());
-    } else {
+    } else if (this.#currentView === Views.SeeAndSharePage) {
+      viewContainer.appendChild(this.#seeAndSharePage.render());
     }
   }
 }
