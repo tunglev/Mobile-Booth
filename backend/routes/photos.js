@@ -5,13 +5,13 @@ const {
     getAllPhotos,
     getPhotoById,
     addPhoto,
-    deleteItem
+    deletePhoto,
 } = require('../controllers/photosController');
 
 router.get('/', getAllPhotos);
 router.get('/:id', getPhotoById);
 router.post('/', addPhoto);
 // router.put('/:id', updatePhoto); // probably doesn't make sense for photos in a database
-router.delete('/:id', deleteItem);
+router.delete('/:id', deletePhoto);
 
 module.exports = router;
