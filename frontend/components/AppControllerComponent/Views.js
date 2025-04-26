@@ -4,7 +4,7 @@
 export const Views = {
     WebcamPage: "WebcamPage",
     PhotoEditPage: "PhotoEditPage",
-    SharePage: "SharePage",
+    SeeAndSharePage: "SeeAndSharePage",
 };
 
-export const ViewArr = ["WebcamPage", "PhotoEditPage", "SharePage"];
+export const ViewArr = ["WebcamPage", "PhotoEditPage", "SeeAndSharePage"];

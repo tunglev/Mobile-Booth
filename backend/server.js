@@ -12,6 +12,10 @@ const userPreferenceRoutes = require('./routes/userPreference'); // Import user 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json({ limit: '10mb' }));
+
+app.use(bodyParser.json());
+
 // Enable CORS for all origins
 app.use(cors()); 
 
@@ -35,15 +39,14 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Fallback to serve `index.html` for any unmatched routes (useful for SPAs)
 // Replace the problematic catchall route
-app.use((req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
+
+// app.use((req, res) => {
+//     res.sendFile(path.join(__dirname, '../frontend/index.html'));
+// });
+
+app.use('/photos/', photosRoutes);
 
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
-
-
-// here goes some app.get, app.post, app.put, app.delete statements here
-// OR use express.Router() and split server.js into multiple files for organization

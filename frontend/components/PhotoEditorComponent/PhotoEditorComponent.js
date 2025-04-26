@@ -2,7 +2,7 @@ import { BaseComponent } from '../BaseComponent/BaseComponent.js';
 // import { openAndGetDB } from '../WebcamPageComponent/WebcamPageComponent.js';
 
 export class PhotoEditorComponent extends BaseComponent {
-  #container = null; // Private variable to store the container element
+  #container = null; 
   #dbprefs = null;
   #dbimages = null;
   #captionInput = null;
@@ -46,6 +46,7 @@ export class PhotoEditorComponent extends BaseComponent {
         </div>
         <button id="goBackToCamera">Go Back To Camera</button>
         <button id="saveInDatabase">Save Photo to Database</button>
+        <button id="seeAndShare">See and Share Your Photos</button>
     `;
   }
 
@@ -208,20 +209,32 @@ export class PhotoEditorComponent extends BaseComponent {
     };
   }
 
-  // MOCKED saving photo to database
+  // saving photo to json
   async #savePhotoToDatabase() {
-    console.log("Storing photo in fake server. Should see error following...");
-    this.#canvas.toBlob(blob => {
-      if (blob) {
-        const response = fetch("/mock/API/", {
-          method: "POST",
-          body: JSON.stringify(blob),
-        });
-      } else {
-        console.error('Failed to get blob from canvas');
-      }
-    }, 'image/png');
-  }
+    console.log("Saving photo to json file");
 
+    const smallerCanvas = shrinkCanvas(this.#canvas, 0.5);
+    const base64 = this.#canvas.toDataURL("image/jpeg", 0.5);
+
+    fetch("/photos/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ image: base64 }),
+    })
+    .then(res => res.json(), (err) => console.log("json didn't work"))
+    .then(data => console.log("Image uploaded!", data))
+    // .catch(err => console.error("Error uploading image:", err));
+  }
 }
 
+
+function shrinkCanvas(originalCanvas, scale = 0.5) {
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = originalCanvas.width * scale;
+  tmpCanvas.height = originalCanvas.height * scale;
+  const ctx = tmpCanvas.getContext('2d');
+  ctx.drawImage(originalCanvas, 0, 0, tmpCanvas.width, tmpCanvas.height);
+  return tmpCanvas;
+}
