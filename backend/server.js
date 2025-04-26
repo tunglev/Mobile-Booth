@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors'); // Import cors
 const photosRoutes = require('./routes/photos');
+
+const settingsRoutes = require('./routes/settings');
 const userPreferenceRoutes = require('./routes/userPreference'); // Import user preference routes
 
 
@@ -20,7 +22,11 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 
 app.use('/photos', photosRoutes);
+
+app.use('/settings', settingsRoutes);
+
 app.use('/preferences', userPreferenceRoutes); // Use user preference routes
+
 
 // Serve static files from the "client" directory
 app.use(express.static(path.join(__dirname, '../frontend')));
