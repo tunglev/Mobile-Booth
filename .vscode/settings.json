@@ -1,0 +1,9 @@
+{
+  "liveServer.settings.ignoreFiles": [
+    ".vscode/**",
+    "**/*.scss",
+    "**/*.sass",
+    "node_modules/**",
+    "backend/**" // Add this line to ignore the backend folder
+  ]
+}
