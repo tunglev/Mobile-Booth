@@ -22,16 +22,6 @@ exports.getPhotoById = (req, res) => {
 }
 
 exports.addPhoto = (req, res) => {
-
-    // const base64 = req.body.image;
-    // if (!base64) return res.status(400).json({ error: 'Missing image data' });
-
-    // const data = base64.replace(/^data:image\/\w+;base64,/, '');
-    // const buffer = Buffer.from(data, 'base64');
-
-    // const filename = `image_${Date.now()}.png`;
-    // const filepath = path.join(__dirname, 'uploads', filename);
-  
     console.log("Starting add photo.");
     const photos = readData();
     const newPhoto = { id: Date.now(), ...req.body };

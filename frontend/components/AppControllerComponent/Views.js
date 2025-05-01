@@ -7,4 +7,4 @@ export const Views = {
     SeeAndSharePage: "SeeAndSharePage",
 };
 
-export const ViewArr = ["WebcamPage", "PhotoEditPage", "SeeAndSharePage"];
+export const ViewArr = ["WebcamPage", "PhotoEditPage", "SeeAndSharePage", "StaticPage"];

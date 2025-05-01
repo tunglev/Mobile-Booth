@@ -19,11 +19,6 @@ app.use(bodyParser.json());
 // Enable CORS for all origins
 app.use(cors()); 
 
-app.use((req, res, next) => {
-    console.log(`Middleware: req: ${req}, res: ${res}`);
-    next();
-});
-
 app.use(bodyParser.json())
 
 app.use('/photos', photosRoutes);
