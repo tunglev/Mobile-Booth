@@ -224,8 +224,14 @@ export class PhotoEditorComponent extends BaseComponent {
       body: JSON.stringify({ image: base64 }),
     })
     .then(res => res.json(), (err) => console.log("json didn't work"))
-    .then(data => console.log("Image uploaded!", data))
-    // .catch(err => console.error("Error uploading image:", err));
+    .then(data => {
+      console.log("Image uploaded!")
+      alert("Successfully uploaded photo!")
+    })
+    .catch(err => {
+      console.error("Error uploading image:", err);
+      alert("Error: failed to upload photo");
+    });
   }
 }
 

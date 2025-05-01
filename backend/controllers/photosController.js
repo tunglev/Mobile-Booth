@@ -1,7 +1,26 @@
 const fs = require('fs');
 
-const readData = () => JSON.parse(fs.readFileSync('photoData.json'));
-const writeData = (data) => fs.writeFileSync('photoData.json', JSON.stringify(data, null, 2));
+const photoDataFilePath = "photoData.json";
+createJSONifNotExists();
+
+function createJSONifNotExists() {
+    if (!fs.existsSync(photoDataFilePath)) {
+        fs.writeFile(
+            photoDataFilePath,
+            JSON.stringify([], null, 2),
+            (err) => err ? console.err("Error writing file:", err) : console.log("File created")
+        );
+    }
+}
+
+function readData() {
+    createJSONifNotExists();
+    return JSON.parse(fs.readFileSync(photoDataFilePath));
+} 
+function writeData(data) {
+    createJSONifNotExists();
+    return fs.writeFileSync(photoDataFilePath, JSON.stringify(data, null, 2));
+}
 
 exports.getAllPhotos = (req, res) => {
     console.log("Got all photos.");
@@ -25,7 +44,6 @@ exports.addPhoto = (req, res) => {
     console.log("Starting add photo.");
     const photos = readData();
     const newPhoto = { id: Date.now(), ...req.body };
-    console.log(photos);
     photos.push(newPhoto);
     writeData(photos);
     res.status(201).json(newPhoto);

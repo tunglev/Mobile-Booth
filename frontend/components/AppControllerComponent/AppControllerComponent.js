@@ -2,7 +2,7 @@ import { NavbarComponent } from '../NavbarComponent/NavbarComponent.js';
 import { PhotoEditorComponent } from '../PhotoEditorComponent/PhotoEditorComponent.js';
 import { SeeAndShareComponent } from '../SeeAndShareComponent/SeeAndShareComponent.js';
 import { WebcamPageComponent } from '../WebcamPageComponent/WebcamPageComponent.js';
-import { Views, ViewArr } from './Views.js';
+import { Views } from './Views.js';
 
 export class AppControllerComponent {
   #container = null; // Private container for the component
