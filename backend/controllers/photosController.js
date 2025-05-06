@@ -23,37 +23,46 @@ function writeData(data) {
     return writeFileSync(photoDataFilePath, JSON.stringify(data, null, 2));
 }
 
-export function getAllPhotos(req, res) {
+export async function getAllPhotos(req, res) {
+    await SQLitePhotoModel.init();
     console.log("Getting all photos from sql.");
-    res.json(SQLitePhotoModel.read());
+    const allPhotos = await SQLitePhotoModel.read();
+    // console.log("All photos:", allPhotos);
+    res.json(allPhotos);
 }
-export function getPhotoById(req, res) {
+export async function getPhotoById(req, res) {
+    await SQLitePhotoModel.init();
     console.log(`Getting photo with id ${req.params.id} from sql.`);
     res.json(SQLitePhotoModel.read(req.params.id));
 }
 export async function addPhoto(req, res) {
-    // console.log("Starting add photo");
-    // // id will be handled by the sql itself, since the default id is a random uuid
-    // const newPhoto = {...req.body};
-    // SQLitePhotoModel.create(newPhoto);
-    // res.status(201).json(newPhoto);
+    await SQLitePhotoModel.init();
+    console.log("Starting add photo");
+    // id will be handled by the sql itself, since the default id is a random uuid
+    const newPhoto = { 
+        photo: req.body.image,
+        datetimeuploaded: Date.now(),
+    };
+    SQLitePhotoModel.create(newPhoto);
+    res.status(201).json(newPhoto);
 
-    try {
-        const imageBuffer = req.file.buffer;
+    // try {
+    //     const imageBuffer = req.file.buffer;
 
-        const photo = await SQLitePhotoModel.create({
-            photo: imageBuffer,
-            datetimeuploaded: Date.now(),
-        });
+    //     const photo = await SQLitePhotoModel.create({
+    //         photo: imageBuffer,
+    //         datetimeuploaded: Date.now(),
+    //     });
 
-        res.json({ success: true, photoid: photo.photoid });
-    } catch (err) {
-        console.error("Upload error:", err);
-        res.status(500).json({ error: "Failed to save photo to database" });
-    }
+    //     res.json({ success: true, photoid: photo.photoid });
+    // } catch (err) {
+    //     console.error("Upload error:", err);
+    //     res.status(500).json({ error: "Failed to save photo to database" });
+    // }
 }
 
-export function deletePhoto(req, res) {
+export async function deletePhoto(req, res) {
+    await SQLitePhotoModel.init();
     console.log("Starting delete photo");
     SQLitePhotoModel.deleteById(req.params.id);
     res.status(204).send();

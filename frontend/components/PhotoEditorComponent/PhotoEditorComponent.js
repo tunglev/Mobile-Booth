@@ -235,32 +235,57 @@ export class PhotoEditorComponent extends BaseComponent {
     });
   }
 
+  // async #savePhotoToDatabase() {
+  //   console.log("Saving photo to database");
+  //   this.#canvas.toBlob((blob) => {
+  //     if (!blob) {
+  //       console.error("Failed to generate image blob");
+  //       alert("Error: couldn't generate image");
+  //       return;
+  //     }
+
+  //     const formData = new FormData();
+  //     formData.append("image", blob, "photo.jpg");
+
+  //     fetch("/photos/", {
+  //       method: "POST",
+  //       body: formData, // no need to set Content-Type manually for FormData
+  //     })
+  //     .then(res => res.json(), (err) => console.err(err))
+  //     .then(data => {
+  //       console.log("Image uploaded!");
+  //       alert("Successfully uploaded photo to database!");
+  //     })
+  //     .catch(err => {
+  //       console.error("Error uploading image:", err);
+  //       alert("Error: failed to upload photo to database");
+  //     });
+  //   }, "image/jpeg", 0.5);
+  // }
+
   async #savePhotoToDatabase() {
     console.log("Saving photo to database");
-    this.#canvas.toBlob((blob) => {
-      if (!blob) {
-        console.error("Failed to generate image blob");
-        alert("Error: couldn't generate image");
-        return;
-      }
 
-      const formData = new FormData();
-      formData.append("image", blob, "photo.jpg");
+    // old JSON version
+    const base64 = this.#canvas.toDataURL("image/jpeg", 0.5);
 
-      fetch("/photos/", {
-        method: "POST",
-        body: formData, // no need to set Content-Type manually for FormData
-      })
-      .then(res => res.json(), (err) => console.log("json didn't work"))
-      .then(data => {
-        console.log("Image uploaded!");
-        alert("Successfully uploaded photo to database!");
-      })
-      .catch(err => {
-        console.error("Error uploading image:", err);
-        alert("Error: failed to upload photo to database");
-      });
-    }, "image/jpeg", 0.5);
+    fetch("/photos/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ image: base64 }),
+    })
+    .then(res => res.json(), (err) => console.err(err))
+    .then(data => {
+      console.log("Image uploaded to database!")
+      alert("Successfully uploaded photo!")
+    })
+    .catch(err => {
+      console.log("Error uploading image:");
+      console.error(err);
+      alert("Error: failed to upload photo");
+    });
   }
 }
 
