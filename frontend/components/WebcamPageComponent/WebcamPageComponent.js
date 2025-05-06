@@ -11,6 +11,7 @@ export class WebcamPageComponent extends BaseComponent {
 	#filterOptions = null;
 	#gridSelect = null;
 	#gridOptions = null;
+	#countdownOverlay = null; // Added for countdown display
 
 	#stream = null;
 	#isActive = false;
@@ -20,6 +21,8 @@ export class WebcamPageComponent extends BaseComponent {
 	#dbimages = null;
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
+	#captureIntervalId = null; // Added to manage the capture interval
+	#isCombiningImages = false; // Flag to prevent concurrent combining operations
 
 	constructor() {
 		super();
@@ -43,8 +46,8 @@ export class WebcamPageComponent extends BaseComponent {
         <header>
             <h1>Mobile Booth</h1>
         </header>
-
         <main>
+            <div id="countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); color: white; font-size: 10em; display: flex; justify-content: center; align-items: center; z-index: 1000; display: none;">3</div>
             <section class="webcam-section">
             <div class="webcam-container">
                 <video id="webcam-video" class="webcam-video" autoplay playsinline></video>
@@ -88,7 +91,7 @@ export class WebcamPageComponent extends BaseComponent {
                 
                 <div class="webcam-controls">
                 <button id="startWebcam">Start Camera</button>
-                <button id="captureImage" disabled>Take Photo</button>
+                <button id="captureImage" disabled>Start capturing</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
                 <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
                 </div>
@@ -218,9 +221,10 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#filterOptions = this.#container.querySelector('#filter-options');
 		this.#gridSelect = this.#container.querySelector('#grid-select');
 		this.#gridOptions = this.#container.querySelector('#grid-options');
+		this.#countdownOverlay = this.#container.querySelector('#countdown-overlay'); // Initialize countdown overlay
 
 		this.#startButton.addEventListener('click', () => this.#toggleWebcam());
-		this.#captureButton.addEventListener('click', () => this.#captureImage());
+		this.#captureButton.addEventListener('click', () => this.#startCapturing());
 		this.#filterSelect.addEventListener('click', () => this.#toggleFilterOptions());
 		this.#gridSelect.addEventListener('click', () => this.#toggleGridOptions());
 		window.addEventListener('beforeunload', () => {
@@ -310,6 +314,10 @@ export class WebcamPageComponent extends BaseComponent {
         if (this.#video) {
             this.#video.srcObject = null;
         }
+
+		// Stop continuous capture if it's running
+		this.#stopCapturingInterval();
+
         if (this.#startButton) {
             this.#startButton.textContent = 'Start Camera';
         }
@@ -394,6 +402,108 @@ export class WebcamPageComponent extends BaseComponent {
 		}
 	}
 
+	#startCapturing() {
+		if (!this.#isActive) {
+			console.warn('Webcam is not active. Cannot start capturing.');
+			return;
+		}
+
+		// Clear any existing interval before starting a new one
+		this.#stopCapturingInterval();
+
+		// Disable the single capture button and finalize button during continuous capture
+		// The main webcam start/stop button remains enabled.
+		if (this.#captureButton) {
+			this.#captureButton.disabled = true;
+		}
+		if (this.#finalizeButton) {
+			this.#finalizeButton.disabled = true;
+		}
+
+		this.#capturedImages = []; // Reset captured images array
+		this.#displayCapturedImages(); // Update UI to show empty/placeholder initially
+
+		let countdown = 3; // Countdown from 3 seconds
+		// Show and initialize countdown overlay
+		if (this.#countdownOverlay) {
+			this.#countdownOverlay.textContent = countdown;
+			this.#countdownOverlay.style.display = 'flex';
+		}
+
+
+		// Start capturing images every 3 seconds
+		this.#captureIntervalId = setInterval(() => {
+			if (!this.#isActive) { // Safety check: if webcam was stopped externally
+				this.#stopCapturingInterval(); // Stop the interval
+				return;
+			}
+			if (countdown > 0) {
+				console.log(`Capturing in ${countdown} seconds...`);
+				if (this.#countdownOverlay) {
+					this.#countdownOverlay.textContent = countdown;
+				}
+				countdown--;
+				return; // Wait for countdown to finish
+			}
+			
+			// Hide countdown when it reaches 0, just before capture
+			if (this.#countdownOverlay) {
+				this.#countdownOverlay.style.display = 'none';
+			}
+
+			// Capture the image
+			this.#captureImage(); // This method adds to #capturedImages and calls #displayCapturedImages
+			countdown = 3; // Reset countdown for the next capture (and show it again if needed)
+			// If we are going to capture again, show countdown
+			if (this.#capturedImages.length < this.#maxRecentImages && this.#countdownOverlay) {
+				this.#countdownOverlay.textContent = countdown;
+				this.#countdownOverlay.style.display = 'flex';
+			}
+
+
+			// Stop capturing if 4 images have been taken
+			if (this.#capturedImages.length >= this.#maxRecentImages) {
+				this.#stopCapturingInterval();
+				 // Combine and save the images
+				this.#combineAndSaveCapturedImages(); // New call
+				// Re-enable finalize button as capture sequence is complete
+				if (this.#finalizeButton) {
+					this.#finalizeButton.disabled = false;
+				}
+				// The single capture button should remain disabled as the "continuous" capture is done.
+				// If the user wants to capture more, they'd typically restart the webcam or a new capture sequence.
+				// However, if the webcam is still active, we might want to re-enable it.
+				// For now, let's assume the "start capturing" button initiated this, and it's done.
+				// The #stopCapturingInterval method already handles re-enabling #captureButton if #isActive.
+				// Let's ensure #captureButton is re-enabled if the webcam is still active.
+				if (this.#isActive && this.#captureButton) {
+					this.#captureButton.disabled = false; 
+				}
+			}
+		}, 1000);
+		console.log('Continuous capture started.');
+	}
+
+	// Helper method to clear the capture interval and manage button states
+	#stopCapturingInterval() {
+		if (this.#captureIntervalId) {
+			clearInterval(this.#captureIntervalId);
+			this.#captureIntervalId = null;
+			console.log('Continuous capture interval stopped.');
+
+			// Hide countdown overlay
+			if (this.#countdownOverlay) {
+				this.#countdownOverlay.style.display = 'none';
+			}
+
+			// Re-enable the capture button if the webcam is still active
+			if (this.#isActive && this.#captureButton) {
+				this.#captureButton.disabled = false;
+			}
+			// Finalize button state is typically managed by #captureImage or other logic
+		}
+	}
+
 	#captureImage() {
 		if (!this.#isActive) return;
 		this.#finalizeButton.disabled = false;
@@ -429,7 +539,6 @@ export class WebcamPageComponent extends BaseComponent {
 
 			// Display the captured images
 			this.#displayCapturedImages();
-            this.#saveImage(canvas);
 		}
 	}
 
@@ -572,6 +681,91 @@ export class WebcamPageComponent extends BaseComponent {
 
 		} catch (error) {
 			console.error('Error updating preferences on server:', error);
+		}
+	}
+
+	async #combineAndSaveCapturedImages() {
+		if (this.#isCombiningImages || this.#capturedImages.length < this.#maxRecentImages || !this.#video) {
+			console.warn('Conditions not met for combining images or already combining.');
+			return;
+		}
+		this.#isCombiningImages = true;
+
+		console.log('Combining and saving images...');
+		const combinedCanvas = document.createElement('canvas');
+		const ctx = combinedCanvas.getContext('2d');
+
+		const videoWidth = this.#video.videoWidth;
+		const videoHeight = this.#video.videoHeight;
+
+		if (videoWidth === 0 || videoHeight === 0) {
+			console.error('Video dimensions are zero, cannot combine images.');
+			this.#isCombiningImages = false;
+			return;
+		}
+
+		// Set combined canvas dimensions based on grid layout
+		switch (this.#currentGridLayout) {
+			case '1x4': // Row
+				combinedCanvas.width = videoWidth * this.#maxRecentImages;
+				combinedCanvas.height = videoHeight;
+				break;
+			case '2x2': // Grid
+				combinedCanvas.width = videoWidth * 2;
+				combinedCanvas.height = videoHeight * 2;
+				break;
+			case '4x1': // Column
+				combinedCanvas.width = videoWidth;
+				combinedCanvas.height = videoHeight * this.#maxRecentImages;
+				break;
+			default: // Default to 1x4 if layout is unknown
+				combinedCanvas.width = videoWidth * this.#maxRecentImages;
+				combinedCanvas.height = videoHeight;
+				break;
+		}
+
+		const imageLoadPromises = this.#capturedImages.map(dataURL => {
+			return new Promise((resolve, reject) => {
+				const img = new Image();
+				img.onload = () => resolve(img);
+				img.onerror = reject;
+				img.src = dataURL;
+			});
+		});
+
+		try {
+			const loadedImages = await Promise.all(imageLoadPromises);
+
+			// Draw images onto the combined canvas
+			loadedImages.forEach((img, index) => {
+				let dx = 0, dy = 0;
+				switch (this.#currentGridLayout) {
+					case '1x4': // Row
+						dx = index * videoWidth;
+						dy = 0;
+						break;
+					case '2x2': // Grid
+						dx = (index % 2) * videoWidth;
+						dy = Math.floor(index / 2) * videoHeight;
+						break;
+					case '4x1': // Column
+						dx = 0;
+						dy = index * videoHeight;
+						break;
+					default:
+						dx = index * videoWidth;
+						dy = 0;
+						break;
+				}
+				ctx.drawImage(img, dx, dy, videoWidth, videoHeight);
+			});
+
+			this.#saveImage(combinedCanvas); // Save the combined image
+			console.log('Combined image saved.');
+		} catch (error) {
+			console.error('Error loading images for combining:', error);
+		} finally {
+			this.#isCombiningImages = false;
 		}
 	}
 
