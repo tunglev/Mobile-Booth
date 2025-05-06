@@ -11,6 +11,7 @@ export class WebcamPageComponent extends BaseComponent {
 	#filterOptions = null;
 	#gridSelect = null;
 	#gridOptions = null;
+	#countdownOverlay = null; // Added for countdown display
 
 	#stream = null;
 	#isActive = false;
@@ -44,8 +45,8 @@ export class WebcamPageComponent extends BaseComponent {
         <header>
             <h1>Mobile Booth</h1>
         </header>
-
         <main>
+            <div id="countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); color: white; font-size: 10em; display: flex; justify-content: center; align-items: center; z-index: 1000; display: none;">3</div>
             <section class="webcam-section">
             <div class="webcam-container">
                 <video id="webcam-video" class="webcam-video" autoplay playsinline></video>
@@ -219,6 +220,7 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#filterOptions = this.#container.querySelector('#filter-options');
 		this.#gridSelect = this.#container.querySelector('#grid-select');
 		this.#gridOptions = this.#container.querySelector('#grid-options');
+		this.#countdownOverlay = this.#container.querySelector('#countdown-overlay'); // Initialize countdown overlay
 
 		this.#startButton.addEventListener('click', () => this.#toggleWebcam());
 		this.#captureButton.addEventListener('click', () => this.#startCapturing());
@@ -420,13 +422,43 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#capturedImages = []; // Reset captured images array
 		this.#displayCapturedImages(); // Update UI to show empty/placeholder initially
 
+		let countdown = 3; // Countdown from 3 seconds
+		// Show and initialize countdown overlay
+		if (this.#countdownOverlay) {
+			this.#countdownOverlay.textContent = countdown;
+			this.#countdownOverlay.style.display = 'flex';
+		}
+
+
 		// Start capturing images every 3 seconds
 		this.#captureIntervalId = setInterval(() => {
 			if (!this.#isActive) { // Safety check: if webcam was stopped externally
 				this.#stopCapturingInterval(); // Stop the interval
 				return;
 			}
+			if (countdown > 0) {
+				console.log(`Capturing in ${countdown} seconds...`);
+				if (this.#countdownOverlay) {
+					this.#countdownOverlay.textContent = countdown;
+				}
+				countdown--;
+				return; // Wait for countdown to finish
+			}
+			
+			// Hide countdown when it reaches 0, just before capture
+			if (this.#countdownOverlay) {
+				this.#countdownOverlay.style.display = 'none';
+			}
+
+			// Capture the image
 			this.#captureImage(); // This method adds to #capturedImages and calls #displayCapturedImages
+			countdown = 3; // Reset countdown for the next capture (and show it again if needed)
+			// If we are going to capture again, show countdown
+			if (this.#capturedImages.length < this.#maxRecentImages && this.#countdownOverlay) {
+				this.#countdownOverlay.textContent = countdown;
+				this.#countdownOverlay.style.display = 'flex';
+			}
+
 
 			// Stop capturing if 4 images have been taken
 			if (this.#capturedImages.length >= this.#maxRecentImages) {
@@ -445,7 +477,7 @@ export class WebcamPageComponent extends BaseComponent {
 					this.#captureButton.disabled = false; 
 				}
 			}
-		}, 3000);
+		}, 1000);
 		console.log('Continuous capture started.');
 	}
 
@@ -455,6 +487,11 @@ export class WebcamPageComponent extends BaseComponent {
 			clearInterval(this.#captureIntervalId);
 			this.#captureIntervalId = null;
 			console.log('Continuous capture interval stopped.');
+
+			// Hide countdown overlay
+			if (this.#countdownOverlay) {
+				this.#countdownOverlay.style.display = 'none';
+			}
 
 			// Re-enable the capture button if the webcam is still active
 			if (this.#isActive && this.#captureButton) {
