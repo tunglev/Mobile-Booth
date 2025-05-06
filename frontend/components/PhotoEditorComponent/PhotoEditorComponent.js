@@ -210,10 +210,10 @@ export class PhotoEditorComponent extends BaseComponent {
   }
 
   // saving photo to json
-  async #savePhotoToDatabase() {
+  async #savePhotoToJSON() {
     console.log("Saving photo to json file");
 
-    const smallerCanvas = shrinkCanvas(this.#canvas, 0.5);
+    // old JSON version
     const base64 = this.#canvas.toDataURL("image/jpeg", 0.5);
 
     fetch("/photos/", {
@@ -229,9 +229,38 @@ export class PhotoEditorComponent extends BaseComponent {
       alert("Successfully uploaded photo!")
     })
     .catch(err => {
-      console.error("Error uploading image:", err);
+      console.log("Error uploading image:");
+      console.error(err);
       alert("Error: failed to upload photo");
     });
+  }
+
+  async #savePhotoToDatabase() {
+    console.log("Saving photo to database");
+    this.#canvas.toBlob((blob) => {
+      if (!blob) {
+        console.error("Failed to generate image blob");
+        alert("Error: couldn't generate image");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", blob, "photo.jpg");
+
+      fetch("/photos/", {
+        method: "POST",
+        body: formData, // no need to set Content-Type manually for FormData
+      })
+      .then(res => res.json(), (err) => console.log("json didn't work"))
+      .then(data => {
+        console.log("Image uploaded!");
+        alert("Successfully uploaded photo to database!");
+      })
+      .catch(err => {
+        console.error("Error uploading image:", err);
+        alert("Error: failed to upload photo to database");
+      });
+    }, "image/jpeg", 0.5);
   }
 }
 

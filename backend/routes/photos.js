@@ -1,17 +1,15 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+import multer from 'multer';
+const router = Router();
+const upload = multer();
 
-const {
-    getAllPhotos,
-    getPhotoById,
-    addPhoto,
-    deletePhoto,
-} = require('../controllers/photosController');
+import { getAllPhotos, getPhotoById, addPhoto, deletePhoto } from '../controllers/photosController';
 
 router.get('/', getAllPhotos);
 router.get('/:id', getPhotoById);
-router.post('/', addPhoto);
-// router.put('/:id', updatePhoto); // probably doesn't make sense for photos in a database
+router.post('/', upload.single("image"), addPhoto);
 router.delete('/:id', deletePhoto);
+// router.put('/:id', updatePhoto); // probably doesn't make sense for photos in a database
 
-module.exports = router;
+
+export default router;
