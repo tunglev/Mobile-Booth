@@ -20,6 +20,7 @@ export class WebcamPageComponent extends BaseComponent {
 	#dbimages = null;
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
+	#captureIntervalId = null; // Added to manage the capture interval
 
 	constructor() {
 		super();
@@ -88,7 +89,7 @@ export class WebcamPageComponent extends BaseComponent {
                 
                 <div class="webcam-controls">
                 <button id="startWebcam">Start Camera</button>
-                <button id="captureImage" disabled>Take Photo</button>
+                <button id="captureImage" disabled>Start capturing</button>
                 <button id="toggleVideoMode">Toggle Video Mode</button>
                 <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
                 </div>
@@ -220,7 +221,7 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#gridOptions = this.#container.querySelector('#grid-options');
 
 		this.#startButton.addEventListener('click', () => this.#toggleWebcam());
-		this.#captureButton.addEventListener('click', () => this.#captureImage());
+		this.#captureButton.addEventListener('click', () => this.#startCapturing());
 		this.#filterSelect.addEventListener('click', () => this.#toggleFilterOptions());
 		this.#gridSelect.addEventListener('click', () => this.#toggleGridOptions());
 		window.addEventListener('beforeunload', () => {
@@ -310,6 +311,10 @@ export class WebcamPageComponent extends BaseComponent {
         if (this.#video) {
             this.#video.srcObject = null;
         }
+
+		// Stop continuous capture if it's running
+		this.#stopCapturingInterval();
+
         if (this.#startButton) {
             this.#startButton.textContent = 'Start Camera';
         }
@@ -391,6 +396,71 @@ export class WebcamPageComponent extends BaseComponent {
 					this.#gridSelect.querySelector('.select-value').textContent = option.textContent;
 				}
 			});
+		}
+	}
+
+	#startCapturing() {
+		if (!this.#isActive) {
+			console.warn('Webcam is not active. Cannot start capturing.');
+			return;
+		}
+
+		// Clear any existing interval before starting a new one
+		this.#stopCapturingInterval();
+
+		// Disable the single capture button and finalize button during continuous capture
+		// The main webcam start/stop button remains enabled.
+		if (this.#captureButton) {
+			this.#captureButton.disabled = true;
+		}
+		if (this.#finalizeButton) {
+			this.#finalizeButton.disabled = true;
+		}
+
+		this.#capturedImages = []; // Reset captured images array
+		this.#displayCapturedImages(); // Update UI to show empty/placeholder initially
+
+		// Start capturing images every 3 seconds
+		this.#captureIntervalId = setInterval(() => {
+			if (!this.#isActive) { // Safety check: if webcam was stopped externally
+				this.#stopCapturingInterval(); // Stop the interval
+				return;
+			}
+			this.#captureImage(); // This method adds to #capturedImages and calls #displayCapturedImages
+
+			// Stop capturing if 4 images have been taken
+			if (this.#capturedImages.length >= this.#maxRecentImages) {
+				this.#stopCapturingInterval();
+				// Re-enable finalize button as capture sequence is complete
+				if (this.#finalizeButton) {
+					this.#finalizeButton.disabled = false;
+				}
+				// The single capture button should remain disabled as the "continuous" capture is done.
+				// If the user wants to capture more, they'd typically restart the webcam or a new capture sequence.
+				// However, if the webcam is still active, we might want to re-enable it.
+				// For now, let's assume the "start capturing" button initiated this, and it's done.
+				// The #stopCapturingInterval method already handles re-enabling #captureButton if #isActive.
+				// Let's ensure #captureButton is re-enabled if the webcam is still active.
+				if (this.#isActive && this.#captureButton) {
+					this.#captureButton.disabled = false; 
+				}
+			}
+		}, 3000);
+		console.log('Continuous capture started.');
+	}
+
+	// Helper method to clear the capture interval and manage button states
+	#stopCapturingInterval() {
+		if (this.#captureIntervalId) {
+			clearInterval(this.#captureIntervalId);
+			this.#captureIntervalId = null;
+			console.log('Continuous capture interval stopped.');
+
+			// Re-enable the capture button if the webcam is still active
+			if (this.#isActive && this.#captureButton) {
+				this.#captureButton.disabled = false;
+			}
+			// Finalize button state is typically managed by #captureImage or other logic
 		}
 	}
 
