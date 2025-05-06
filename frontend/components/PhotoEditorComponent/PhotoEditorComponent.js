@@ -76,14 +76,30 @@ export class PhotoEditorComponent extends BaseComponent {
 
   #getAndShowPhoto() {
     this.#getMostRecentImage((record) => {
-      if (record) {
+      if (record && record.blob) { // Ensure record and blob exist
         const img = new Image();
-        img.src = URL.createObjectURL(record.blob);
         img.onload = () => {
           const ctx = this.#canvas.getContext('2d');
+          // Adjust canvas to the aspect ratio of the incoming image
+          this.#canvas.width = img.width;
+          this.#canvas.height = img.height;
           ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
           ctx.drawImage(img, 0, 0, this.#canvas.width, this.#canvas.height);
         };
+        img.onerror = () => {
+          console.error("Error loading image from blob.");
+          // Optionally, display a placeholder or error message on the canvas
+        };
+        img.src = URL.createObjectURL(record.blob);
+      } else {
+        console.log("No recent image record found or blob is missing.");
+        // Optionally, display a placeholder or error message on the canvas
+        const ctx = this.#canvas.getContext('2d');
+        ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+        ctx.font = '16px sans-serif';
+        ctx.fillStyle = 'gray';
+        ctx.textAlign = 'center';
+        ctx.fillText('No image to display. Please capture an image first.', this.#canvas.width / 2, this.#canvas.height / 2);
       }
     });
   }
@@ -157,7 +173,7 @@ export class PhotoEditorComponent extends BaseComponent {
 
   #loadUserPreferences() {
     if (!this.#dbprefs) {
-      console.log("tried but failed to load user prefs");
+      console.log("tried but failed to load user prefs because dbprefs is not initialized");
       return;
     }
     console.log("Loading user prefs...");
@@ -167,16 +183,16 @@ export class PhotoEditorComponent extends BaseComponent {
     captionRequest.onsuccess = (event) => {
       if (event.target.result) {
         const { caption } = event.target.result;
-        setTimeout(() => {
-          if (this.#container) {
-            ctx.font = '24px sans-serif';
-            ctx.fillStyle = color;
-            ctx.fillText(caption, 10, 380); // simple fixed position
+        // Apply caption to the input field, not directly to canvas here
+        // The actual drawing of text onto canvas happens on 'Add Text' button click
+        if (this.#captionInput) {
             this.#captionInput.value = caption;
-          }
-        }, 0);
+        }
       }
     }
+    captionRequest.onerror = (event) => {
+        console.error('Error loading caption preference:', event.target.error);
+    };
   }
 
   #getMostRecentImage(callback) {
@@ -213,8 +229,10 @@ export class PhotoEditorComponent extends BaseComponent {
   async #savePhotoToDatabase() {
     console.log("Saving photo to json file");
 
-    const smallerCanvas = shrinkCanvas(this.#canvas, 0.5);
-    const base64 = this.#canvas.toDataURL("image/jpeg", 0.5);
+    // No need to shrink further if the combined image is already appropriately sized.
+    // If shrinking is still desired, ensure shrinkCanvas handles it correctly.
+    // const smallerCanvas = shrinkCanvas(this.#canvas, 0.5); 
+    const base64 = this.#canvas.toDataURL("image/jpeg", 0.8); // Use a reasonable quality
 
     fetch("/photos/", {
       method: "POST",
