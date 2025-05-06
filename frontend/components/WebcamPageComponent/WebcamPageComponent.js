@@ -22,6 +22,7 @@ export class WebcamPageComponent extends BaseComponent {
 	#capturedImages = []; // Array to store captured images
 	#maxRecentImages = 4; // Maximum number of recent images to display
 	#captureIntervalId = null; // Added to manage the capture interval
+	#isCombiningImages = false; // Flag to prevent concurrent combining operations
 
 	constructor() {
 		super();
@@ -463,6 +464,8 @@ export class WebcamPageComponent extends BaseComponent {
 			// Stop capturing if 4 images have been taken
 			if (this.#capturedImages.length >= this.#maxRecentImages) {
 				this.#stopCapturingInterval();
+				 // Combine and save the images
+				this.#combineAndSaveCapturedImages(); // New call
 				// Re-enable finalize button as capture sequence is complete
 				if (this.#finalizeButton) {
 					this.#finalizeButton.disabled = false;
@@ -536,7 +539,6 @@ export class WebcamPageComponent extends BaseComponent {
 
 			// Display the captured images
 			this.#displayCapturedImages();
-            this.#saveImage(canvas);
 		}
 	}
 
@@ -679,6 +681,91 @@ export class WebcamPageComponent extends BaseComponent {
 
 		} catch (error) {
 			console.error('Error updating preferences on server:', error);
+		}
+	}
+
+	async #combineAndSaveCapturedImages() {
+		if (this.#isCombiningImages || this.#capturedImages.length < this.#maxRecentImages || !this.#video) {
+			console.warn('Conditions not met for combining images or already combining.');
+			return;
+		}
+		this.#isCombiningImages = true;
+
+		console.log('Combining and saving images...');
+		const combinedCanvas = document.createElement('canvas');
+		const ctx = combinedCanvas.getContext('2d');
+
+		const videoWidth = this.#video.videoWidth;
+		const videoHeight = this.#video.videoHeight;
+
+		if (videoWidth === 0 || videoHeight === 0) {
+			console.error('Video dimensions are zero, cannot combine images.');
+			this.#isCombiningImages = false;
+			return;
+		}
+
+		// Set combined canvas dimensions based on grid layout
+		switch (this.#currentGridLayout) {
+			case '1x4': // Row
+				combinedCanvas.width = videoWidth * this.#maxRecentImages;
+				combinedCanvas.height = videoHeight;
+				break;
+			case '2x2': // Grid
+				combinedCanvas.width = videoWidth * 2;
+				combinedCanvas.height = videoHeight * 2;
+				break;
+			case '4x1': // Column
+				combinedCanvas.width = videoWidth;
+				combinedCanvas.height = videoHeight * this.#maxRecentImages;
+				break;
+			default: // Default to 1x4 if layout is unknown
+				combinedCanvas.width = videoWidth * this.#maxRecentImages;
+				combinedCanvas.height = videoHeight;
+				break;
+		}
+
+		const imageLoadPromises = this.#capturedImages.map(dataURL => {
+			return new Promise((resolve, reject) => {
+				const img = new Image();
+				img.onload = () => resolve(img);
+				img.onerror = reject;
+				img.src = dataURL;
+			});
+		});
+
+		try {
+			const loadedImages = await Promise.all(imageLoadPromises);
+
+			// Draw images onto the combined canvas
+			loadedImages.forEach((img, index) => {
+				let dx = 0, dy = 0;
+				switch (this.#currentGridLayout) {
+					case '1x4': // Row
+						dx = index * videoWidth;
+						dy = 0;
+						break;
+					case '2x2': // Grid
+						dx = (index % 2) * videoWidth;
+						dy = Math.floor(index / 2) * videoHeight;
+						break;
+					case '4x1': // Column
+						dx = 0;
+						dy = index * videoHeight;
+						break;
+					default:
+						dx = index * videoWidth;
+						dy = 0;
+						break;
+				}
+				ctx.drawImage(img, dx, dy, videoWidth, videoHeight);
+			});
+
+			this.#saveImage(combinedCanvas); // Save the combined image
+			console.log('Combined image saved.');
+		} catch (error) {
+			console.error('Error loading images for combining:', error);
+		} finally {
+			this.#isCombiningImages = false;
 		}
 	}
 
