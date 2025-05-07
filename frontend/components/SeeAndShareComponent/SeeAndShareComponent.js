@@ -18,7 +18,7 @@ export class SeeAndShareComponent extends BaseComponent {
       this.#initializeProperties();
       this.#attachEventListeners();
     }
-    this.#getPhotosFromJsonFile();
+    this.#getPhotosFromDatabase();
     return this.#container;
   }
 
@@ -37,26 +37,23 @@ export class SeeAndShareComponent extends BaseComponent {
 
   // Attaches the event listeners for the component
   #attachEventListeners() {
-    // this.#getPhotoButton.addEventListener("click", () => {});
-    // this.#deletePhotoButton.addEventListener("click", () => {});
   }
 
   #initializeProperties() {
-    // this.#getPhotoButton = this.#container.querySelector("#getPhoto");
-    // this.#deletePhotoButton = this.#container.querySelector("#deletePhoto");
   }
 
   getContainer() {
     return this.#container;
   }
 
-  #getPhotosFromJsonFile() {
+  #getPhotosFromDatabase() {
     // fetch GET
-    fetch("/photos/")
+    fetch("/photos/", { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         data.forEach((photo) => {
+          console.log("photo:", photo);
           const canvas = document.createElement("canvas");
           canvas.width = 300;
           canvas.height = 200;
@@ -66,12 +63,12 @@ export class SeeAndShareComponent extends BaseComponent {
           img.onload = () =>
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           // hopefully this works
-          img.src = photo.image;
+          img.src = photo.photo;
 
           const deleteBtn = document.createElement("button");
           deleteBtn.innerText = "Delete";
           deleteBtn.onclick = () => {
-            fetch(`/photos/${photo.id}`, {
+            fetch(`/photos/${photo.photoid}`, {
               method: "DELETE",
             })
               .then((res) => {
@@ -87,14 +84,3 @@ export class SeeAndShareComponent extends BaseComponent {
       });
   }
 }
-
-// function drawBase64ToCanvas(base64, canvas) {
-//   const img = new Image();
-//   img.onload = () => {
-//     canvas.width = img.width;
-//     canvas.height = img.height;
-//     const ctx = canvas.getContext("2d");
-//     ctx.drawImage(img, 0, 0);
-//   };
-//   img.src = base64;
-// }

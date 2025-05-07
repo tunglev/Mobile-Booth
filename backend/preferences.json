@@ -1,4 +1,4 @@
 {
-  "filter": "grayscale",
+  "filter": "invert",
   "gridSize": "2x2"
 }

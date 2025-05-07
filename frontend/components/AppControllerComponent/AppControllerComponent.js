@@ -2,7 +2,7 @@ import { NavbarComponent } from '../NavbarComponent/NavbarComponent.js';
 import { PhotoEditorComponent } from '../PhotoEditorComponent/PhotoEditorComponent.js';
 import { SeeAndShareComponent } from '../SeeAndShareComponent/SeeAndShareComponent.js';
 import { WebcamPageComponent } from '../WebcamPageComponent/WebcamPageComponent.js';
-import { Views, ViewArr } from './Views.js';
+import { Views } from './Views.js';
 
 export class AppControllerComponent {
   #container = null; // Private container for the component
@@ -87,14 +87,12 @@ export class AppControllerComponent {
     if (backToPhotoEditor && !this.#backToPhotoEditorListenerSet) {
       backToPhotoEditor.addEventListener("click", () => {
         console.log("back to photo editor");
-        // TODO: Fix this
-        this.#currentView = ViewArr.PhotoEditPage;
+        this.#currentView = Views.PhotoEditPage;
         this.#renderCurrentView();
         this.#backToPhotoEditorListenerSet = true; //so we don't keep adding event listeners
         this.#attachEventListeners();
       })
     }
-
   }
 
   // Toggles the view

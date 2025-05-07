@@ -1,14 +1,79 @@
-const fs = require('fs');
+import { existsSync, writeFile, readFileSync, writeFileSync } from 'fs';
+import SQLitePhotoModel from '../model/SQLitePhotosModel.js';
 
-const readData = () => JSON.parse(fs.readFileSync('photoData.json'));
-const writeData = (data) => fs.writeFileSync('photoData.json', JSON.stringify(data, null, 2));
+const photoDataFilePath = "photoData.json";
+createJSONifNotExists();
 
-exports.getAllPhotos = (req, res) => {
+function createJSONifNotExists() {
+    if (!existsSync(photoDataFilePath)) {
+        writeFile(
+            photoDataFilePath,
+            JSON.stringify([], null, 2),
+            (err) => err ? console.err("Error writing file:", err) : console.log("File created")
+        );
+    }
+}
+
+function readData() {
+    createJSONifNotExists();
+    return JSON.parse(readFileSync(photoDataFilePath));
+} 
+function writeData(data) {
+    createJSONifNotExists();
+    return writeFileSync(photoDataFilePath, JSON.stringify(data, null, 2));
+}
+
+export async function getAllPhotos(req, res) {
+    await SQLitePhotoModel.init();
+    console.log("Getting all photos from sql.");
+    const allPhotos = await SQLitePhotoModel.read();
+    // console.log("All photos:", allPhotos);
+    res.json(allPhotos);
+}
+export async function getPhotoById(req, res) {
+    await SQLitePhotoModel.init();
+    console.log(`Getting photo with id ${req.params.id} from sql.`);
+    res.json(SQLitePhotoModel.read(req.params.id));
+}
+export async function addPhoto(req, res) {
+    await SQLitePhotoModel.init();
+    console.log("Starting add photo");
+    // id will be handled by the sql itself, since the default id is a random uuid
+    const newPhoto = { 
+        photo: req.body.image,
+        datetimeuploaded: Date.now(),
+    };
+    SQLitePhotoModel.create(newPhoto);
+    res.status(201).json(newPhoto);
+
+    // try {
+    //     const imageBuffer = req.file.buffer;
+
+    //     const photo = await SQLitePhotoModel.create({
+    //         photo: imageBuffer,
+    //         datetimeuploaded: Date.now(),
+    //     });
+
+    //     res.json({ success: true, photoid: photo.photoid });
+    // } catch (err) {
+    //     console.error("Upload error:", err);
+    //     res.status(500).json({ error: "Failed to save photo to database" });
+    // }
+}
+
+export async function deletePhoto(req, res) {
+    await SQLitePhotoModel.init();
+    console.log("Starting delete photo");
+    SQLitePhotoModel.deleteById(req.params.id);
+    res.status(204).send();
+}
+
+export function getAllPhotosJSON(req, res) {
     console.log("Got all photos.");
     res.json(readData());
-};
+}
 
-exports.getPhotoById = (req, res) => {
+export function getPhotoByIdJSON(req, res) {
     const photos = readData();
     const photo = photos.find(i => i.id == req.params.id);
     if (photo) {
@@ -21,28 +86,17 @@ exports.getPhotoById = (req, res) => {
     }
 }
 
-exports.addPhoto = (req, res) => {
-
-    // const base64 = req.body.image;
-    // if (!base64) return res.status(400).json({ error: 'Missing image data' });
-
-    // const data = base64.replace(/^data:image\/\w+;base64,/, '');
-    // const buffer = Buffer.from(data, 'base64');
-
-    // const filename = `image_${Date.now()}.png`;
-    // const filepath = path.join(__dirname, 'uploads', filename);
-  
+export function addPhotoJSON(req, res) {
     console.log("Starting add photo.");
     const photos = readData();
     const newPhoto = { id: Date.now(), ...req.body };
-    console.log(photos);
     photos.push(newPhoto);
     writeData(photos);
     res.status(201).json(newPhoto);
     console.log("Added photo.");
-};
+}
   
-exports.deletePhoto = (req, res) => {
+export function deletePhotoJSON(req, res) {
     let photos = readData();
     const newPhotos = photos.filter(i => i.id != req.params.id);
     if (newPhotos.length === photos.length) {
@@ -52,4 +106,4 @@ exports.deletePhoto = (req, res) => {
     console.log("Deleted photo.");
     writeData(newPhotos);
     res.status(204).send();
-};
+}

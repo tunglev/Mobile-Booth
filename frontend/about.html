@@ -79,6 +79,14 @@
       </div>
     </div>
   </div>
-  <script type="module" src="./js/main.js"></script>
+  <script type="module">
+    import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const app = document.getElementById('app');
+      const navbar = new NavbarComponent();
+      app.appendChild(navbar.render());
+    });
+  </script>
 </body>
 </html> 
