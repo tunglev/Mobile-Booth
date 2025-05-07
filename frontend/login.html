@@ -6,6 +6,9 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="stylesheet" href="styles.css">
   <title>Login - Group 15 Mobile Booth</title>
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </head>
 <body>
   <div id="app"></div>
@@ -13,23 +16,71 @@
   <div class="login-page">
     <div class="login-container">
       <h1>Authenticate</h1>
-      <p>Please sign into Google to continue.</p>
+      <p id="login-message">Please sign into Google to continue.</p>
       <button id="sign-in-button">Sign In</button>
+      <button id="logout-button" style="display: none;">Log Out</button>
     </div>
   </div>
 
-  <script type="module">
-    import { NavbarComponent } from './components/NavbarComponent/NavbarComponent.js';
-
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOVU_fYzkoEobhA8lG1wl3UMSAlwPfKoY",
+      authDomain: "mobile-booth-fbd4d.firebaseapp.com",
+      projectId: "mobile-booth-fbd4d",
+      storageBucket: "mobile-booth-fbd4d.firebasestorage.app",
+      messagingSenderId: "259916876960",
+      appId: "1:259916876960:web:2ade5558ad2ac459754dc5",
+      measurementId: "G-KHLWPRPPW7"
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  
     document.addEventListener('DOMContentLoaded', () => {
-      const app = document.getElementById('app');
-      const navbar = new NavbarComponent();
-      app.appendChild(navbar.render());
-    });
-
-    document.getElementById('sign-in-button').addEventListener('click', function() {
-      alert('This would connect to a real authentication service in a production environment.');
-      window.location.href = 'home.html';
+      const loginMessage = document.getElementById('login-message');
+      const signInButton = document.getElementById('sign-in-button');
+      const logoutButton = document.getElementById('logout-button');
+  
+      // Check authentication state on page load
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // User is signed in
+          loginMessage.textContent = "You've successfully signed in";
+          signInButton.style.display = 'none';
+          logoutButton.style.display = 'block';
+        } else {
+          // User is signed out
+          loginMessage.textContent = "Please sign into Google to continue.";
+          signInButton.style.display = 'block';
+          logoutButton.style.display = 'none';
+        }
+      });
+  
+      // Handle login
+      signInButton.addEventListener('click', async () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+          const result = await auth.signInWithPopup(provider);
+          const user = result.user;
+          console.log("User logged in:", user);
+          const token = await user.getIdToken();
+          sessionStorage.setItem("authToken", token);
+        } catch (error) {
+          console.error("Login failed:", error);
+        }
+      });
+  
+      // Handle logout
+      logoutButton.addEventListener('click', async () => {
+        try {
+          await auth.signOut();
+          sessionStorage.removeItem("authToken");
+        } catch (error) {
+          console.error("Logout failed:", error);
+        }
+      });
     });
   </script>
 </body>
