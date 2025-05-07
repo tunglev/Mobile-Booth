@@ -102,6 +102,14 @@ button:disabled:hover {
   max-width: 400px;
 }
 
+.login-container button {
+  display: block;
+  margin: 0 auto; 
+  width: 100%; 
+  max-width: 200px; 
+  text-align: center;
+}
+
 /* Home Page Styles */
 .task-page {
   width: 100%;
