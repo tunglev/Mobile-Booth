@@ -56,11 +56,54 @@ export class PhotoEditorComponent extends BaseComponent {
       const ctx = this.#canvas.getContext('2d');
       const text = this.#container.querySelector('#captionInput').value;
       const color = this.#container.querySelector('#colorInput').value;
-      ctx.font = '24px sans-serif';
-      ctx.fillStyle = color;
-      ctx.fillText(text, 10, 380); // simple fixed position
 
-      this.#saveCaptionPreference(text);
+      // Redraw the image first to clear previous text
+      this.#getMostRecentImage((record) => {
+        if (record && record.blob) {
+          const img = new Image();
+          img.onload = () => {
+            // Ensure canvas dimensions match the image to avoid distortion
+            // This might already be handled by #getAndShowPhoto, but good to be sure
+            // or if the image aspect ratio is critical for text placement.
+            // If #getAndShowPhoto always sets canvas to image dimensions, this might be redundant.
+            // For now, let's assume it's good practice to ensure it here too.
+            this.#canvas.width = img.width;
+            this.#canvas.height = img.height;
+            ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height); // Clear canvas
+            ctx.drawImage(img, 0, 0, this.#canvas.width, this.#canvas.height); // Redraw image
+
+            // Add new text
+            ctx.font = '24px sans-serif';
+            ctx.fillStyle = color;
+            // Position text at the bottom-left with a margin
+            const margin = 10; // Define a margin from the edge
+            ctx.fillText(text, margin, this.#canvas.height - margin);
+
+            this.#saveCaptionPreference(text);
+          };
+          img.onerror = () => {
+            console.error("Error loading image from blob for adding text.");
+            // Fallback: if image can't be redrawn, just draw text (might draw over old text)
+            // Or, clear and draw text on blank canvas if preferred
+            ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height); // Clear canvas
+            ctx.font = '24px sans-serif';
+            ctx.fillStyle = color;
+            const margin = 10;
+            ctx.fillText(text, margin, this.#canvas.height - margin);
+            this.#saveCaptionPreference(text);
+          };
+          img.src = URL.createObjectURL(record.blob);
+        } else {
+          // If no image, just draw text on blank canvas (or handle as error)
+          console.log("No image to draw text on, drawing on blank canvas.");
+          ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height); // Clear canvas
+          ctx.font = '24px sans-serif';
+          ctx.fillStyle = color;
+          const margin = 10;
+          ctx.fillText(text, margin, this.#canvas.height - margin);
+          this.#saveCaptionPreference(text);
+        }
+      });
     });
 
     this.#saveButton.addEventListener('click', () => {
