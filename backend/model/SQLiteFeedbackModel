@@ -1,0 +1,66 @@
+const { DataTypes, Sequelize } = require("sequelize");
+
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: "database.sqlite",
+});
+
+const Feedback = sequelize.define("Feedback", {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  feedback: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  timestamp: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.NOW,
+  },
+});
+
+class _SQLiteFeedbackModel {
+  constructor() {}
+
+  async init(fresh = false) {
+    await sequelize.authenticate();
+    await sequelize.sync({ logging: console.log });
+
+    if (fresh) {
+      await this.deleteAll();
+    }
+  }
+
+  async create(entry) {
+    return await Feedback.create(entry);
+  }
+
+  async read(id = null) {
+    if (id) {
+      return await Feedback.findByPk(id);
+    }
+    return await Feedback.findAll();
+  }
+
+  async deleteById(id) {
+    await Feedback.destroy({ where: { feedbackid: id } });
+    return id;
+  }
+
+  async deleteAll() {
+    await Feedback.destroy({ truncate: true });
+  }
+}
+
+const SQLiteFeedbackModel = new _SQLiteFeedbackModel();
+module.exports = SQLiteFeedbackModel;
