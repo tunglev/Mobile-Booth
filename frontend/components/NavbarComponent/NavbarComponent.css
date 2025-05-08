@@ -6,6 +6,7 @@
     background-color: #ffffff; /* Changed to white */
     border-bottom: 1px solid #eeeeee; /* Lighter border */
     width: 100%;
+    /* position: relative; */ /* Removed as button is no longer in navbar */
 }
   
 .navbar a {
@@ -23,3 +24,5 @@
     display: flex;
     gap: 1.5rem;
 }
+
+/* Removed .theme-toggle-button and its dark theme styles as it's now a separate component */
