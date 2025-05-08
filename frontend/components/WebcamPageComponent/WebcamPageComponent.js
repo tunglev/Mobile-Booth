@@ -720,25 +720,49 @@ export class WebcamPageComponent extends BaseComponent {
 			return;
 		}
 
-		// Set combined canvas dimensions based on grid layout
+		const frameThickness = 20; // Corrected back to 20px
+		const gapSize = 10;       // Gap between images, halved from 20px
+
+		let numCols, numRows;
+		const numImages = this.#maxRecentImages;
+
 		switch (this.#currentGridLayout) {
-			case '1x4': // Row
-				combinedCanvas.width = videoWidth * this.#maxRecentImages;
-				combinedCanvas.height = videoHeight;
+			case '1x4': // Row: 1 row, numImages cols
+				numCols = numImages;
+				numRows = 1;
 				break;
-			case '2x2': // Grid
-				combinedCanvas.width = videoWidth * 2;
-				combinedCanvas.height = videoHeight * 2;
+			case '2x2': // Grid: 2 rows, 2 cols
+				numCols = 2;
+				numRows = 2;
+				if (numImages !== 4) {
+          console.warn(`2x2 layout expects 4 images, but found ${numImages}. Adjusting to fit.`);
+          // Potentially adjust numCols/numRows or how images are laid out if numImages isn't 4.
+          // For simplicity, we'll assume it will attempt to fill a 2x2 grid.
+        }
 				break;
-			case '4x1': // Column
-				combinedCanvas.width = videoWidth;
-				combinedCanvas.height = videoHeight * this.#maxRecentImages;
+			case '4x1': // Column: numImages rows, 1 col
+				numCols = 1;
+				numRows = numImages;
 				break;
-			default: // Default to 1x4 if layout is unknown
-				combinedCanvas.width = videoWidth * this.#maxRecentImages;
-				combinedCanvas.height = videoHeight;
+			default: // Default to 1x4
+				console.warn(`Unknown grid layout: ${this.#currentGridLayout}. Defaulting to 1x4.`);
+				numCols = numImages;
+				numRows = 1;
 				break;
 		}
+
+		// Calculate dimensions for one cell (image + its frame)
+		const cellWidth = videoWidth + 2 * frameThickness;
+		const cellHeight = videoHeight + 2 * frameThickness;
+
+		// Calculate combined canvas dimensions
+		combinedCanvas.width = numCols * cellWidth + (numCols > 1 ? (numCols - 1) * gapSize : 0);
+		combinedCanvas.height = numRows * cellHeight + (numRows > 1 ? (numRows - 1) * gapSize : 0);
+
+		// Fill canvas with white (for frames and gaps)
+		ctx.fillStyle = 'white';
+		ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
 
 		const imageLoadPromises = this.#capturedImages.map(dataURL => {
 			return new Promise((resolve, reject) => {
@@ -754,30 +778,42 @@ export class WebcamPageComponent extends BaseComponent {
 
 			// Draw images onto the combined canvas
 			loadedImages.forEach((img, index) => {
-				let dx = 0, dy = 0;
+				if (index >= numCols * numRows) {
+					console.warn(`Skipping image index ${index} as it exceeds the capacity of the ${numCols}x${numRows} grid.`);
+					return;
+				}
+				let col, row;
+				// Determine col and row for the current image based on layout and index
 				switch (this.#currentGridLayout) {
-					case '1x4': // Row
-						dx = index * videoWidth;
-						dy = 0;
+					case '1x4':
+						col = index;
+						row = 0;
 						break;
-					case '2x2': // Grid
-						dx = (index % 2) * videoWidth;
-						dy = Math.floor(index / 2) * videoHeight;
+					case '2x2':
+						col = index % numCols; // numCols is 2 here
+						row = Math.floor(index / numCols); // numCols is 2 here
 						break;
-					case '4x1': // Column
-						dx = 0;
-						dy = index * videoHeight;
+					case '4x1':
+						col = 0;
+						row = index;
 						break;
-					default:
-						dx = index * videoWidth;
-						dy = 0;
+					default: // Defaulting to 1x4 logic
+						col = index;
+						row = 0;
 						break;
 				}
-				ctx.drawImage(img, dx, dy, videoWidth, videoHeight);
+
+				// Calculate top-left position (cellX, cellY) for the current cell
+				const cellX = col * (cellWidth + gapSize);
+				const cellY = row * (cellHeight + gapSize);
+
+				// Draw the image itself, offset by frameThickness within its cell.
+				// The white background for the frame and gaps is already handled by the canvas fill.
+				ctx.drawImage(img, cellX + frameThickness, cellY + frameThickness, videoWidth, videoHeight);
 			});
 
 			this.#saveImage(combinedCanvas); // Save the combined image
-			console.log('Combined image saved.');
+			console.log('Combined image with frames and gaps saved.');
 		} catch (error) {
 			console.error('Error loading images for combining:', error);
 		} finally {
