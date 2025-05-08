@@ -31,6 +31,11 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#loadPreferencesFromServer(); // Load from server instead of local
 	}
 
+    #playAudio(soundFilePath) {
+        const audio = new Audio(soundFilePath);
+        audio.play().catch(error => console.error(`Error playing sound: ${soundFilePath}`, error));
+    }
+
     render() {
         this.#stopWebcam();
         if (this.#container) {
@@ -428,62 +433,67 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#displayCapturedImages(); // Update UI to show empty/placeholder initially
 
 		let countdown = 3; // Countdown from 3 seconds
-		// Show and initialize countdown overlay
+		// Show and initialize countdown overlay for the first number (e.g., 3)
 		if (this.#countdownOverlay) {
 			this.#countdownOverlay.textContent = countdown;
 			this.#countdownOverlay.style.display = 'flex';
+            // Play sound immediately for the first number if it's greater than 0
+            if (countdown > 0) { 
+                this.#playAudio('assets/sounds/count.mp3');
+            }
 		}
 
-
-		// Start capturing images every 3 seconds
+		// Start capturing images every second after the initial display
 		this.#captureIntervalId = setInterval(() => {
 			if (!this.#isActive) { // Safety check: if webcam was stopped externally
 				this.#stopCapturingInterval(); // Stop the interval
 				return;
 			}
-			if (countdown > 0) {
-				console.log(`Capturing in ${countdown} seconds...`);
-				if (this.#countdownOverlay) {
-					this.#countdownOverlay.textContent = countdown;
-				}
-				countdown--;
-				return; // Wait for countdown to finish
-			}
-			
-			// Hide countdown when it reaches 0, just before capture
-			if (this.#countdownOverlay) {
-				this.#countdownOverlay.style.display = 'none';
-			}
 
-			// Capture the image
-			this.#captureImage(); // This method adds to #capturedImages and calls #displayCapturedImages
-			countdown = 3; // Reset countdown for the next capture (and show it again if needed)
-			// If we are going to capture again, show countdown
-			if (this.#capturedImages.length < this.#maxRecentImages && this.#countdownOverlay) {
-				this.#countdownOverlay.textContent = countdown;
-				this.#countdownOverlay.style.display = 'flex';
-			}
+            // `countdown` here is the value that was last displayed or set.
+            // We decrement it first to get the new value for this tick.
+            if (countdown > 0) {
+                countdown--; // New value for this tick (e.g., 2, then 1, then 0)
 
+                if (countdown > 0) { // If the new value is still positive (e.g., 2 or 1)
+                    // This is a countdown tick, not the capture tick yet.
+                    if (this.#countdownOverlay) {
+                        this.#countdownOverlay.textContent = countdown; // Display the new number (2 or 1)
+                    }
+                    this.#playAudio('assets/sounds/count.mp3'); // Play sound for this new number
+                    return; // End this interval tick; wait for the next one.
+                }
+                // If countdown is now 0, we fall through to the capture logic below.
+            }
 
-			// Stop capturing if 4 images have been taken
-			if (this.#capturedImages.length >= this.#maxRecentImages) {
-				this.#stopCapturingInterval();
-				 // Combine and save the images
-				this.#combineAndSaveCapturedImages(); // New call
-				// Re-enable finalize button as capture sequence is complete
-				if (this.#finalizeButton) {
-					this.#finalizeButton.disabled = false;
-				}
-				// The single capture button should remain disabled as the "continuous" capture is done.
-				// If the user wants to capture more, they'd typically restart the webcam or a new capture sequence.
-				// However, if the webcam is still active, we might want to re-enable it.
-				// For now, let's assume the "start capturing" button initiated this, and it's done.
-				// The #stopCapturingInterval method already handles re-enabling #captureButton if #isActive.
-				// Let's ensure #captureButton is re-enabled if the webcam is still active.
-				if (this.#isActive && this.#captureButton) {
-					this.#captureButton.disabled = false; 
-				}
-			}
+            // This point is reached if countdown became 0 in the block above.
+            // Hide countdown display as it's now 0
+            if (this.#countdownOverlay) {
+                this.#countdownOverlay.style.display = 'none';
+            }
+
+            this.#captureImage(); // Capture the image (plays shutter sound)
+
+            // Check if the sequence of captures is complete
+            if (this.#capturedImages.length < this.#maxRecentImages) {
+                // Not complete, reset countdown for the next image
+                countdown = 3; 
+                if (this.#countdownOverlay) {
+                    this.#countdownOverlay.textContent = countdown; // Display 3 for the new countdown
+                    this.#countdownOverlay.style.display = 'flex';
+                    this.#playAudio('assets/sounds/count.mp3'); // Play sound for this new 3
+                }
+            } else {
+                // Sequence complete
+                this.#stopCapturingInterval(); 
+                this.#combineAndSaveCapturedImages();
+                if (this.#finalizeButton) {
+                    this.#finalizeButton.disabled = false;
+                }
+                if (this.#isActive && this.#captureButton) {
+                    this.#captureButton.disabled = false; 
+                }
+            }
 		}, 1000);
 		console.log('Continuous capture started.');
 	}
@@ -523,12 +533,14 @@ export class WebcamPageComponent extends BaseComponent {
 		if (context) {
 			context.drawImage(this.#video, 0, 0, canvas.width, canvas.height);
 
-			// Apply filter to canvas if needed
+			 // Apply filter to canvas if needed
 			if (this.#currentFilter !== 'none') {
 				context.filter = this.#video.style.filter;
 				context.drawImage(canvas, 0, 0);
 				context.filter = 'none';
 			}
+
+            this.#playAudio('assets/sounds/camera-shutter.mp3'); // Play shutter sound
 
 			// Convert canvas to data URL
 			const imageDataURL = canvas.toDataURL('image/png');
