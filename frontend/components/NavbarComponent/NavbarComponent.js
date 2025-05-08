@@ -2,6 +2,7 @@ import { BaseComponent } from '../BaseComponent/BaseComponent.js';
 
 export class NavbarComponent extends BaseComponent {
   #container = null;
+  // #themeToggleButton = null; // Removed
 
   constructor(taskData = {}) {
     super();
@@ -22,9 +23,15 @@ export class NavbarComponent extends BaseComponent {
         <li><a href="about.html" id="navbar-about-us">About Us</a></li>
         <li><a href="feedback.html">Feedback</a></li>
         <li><a href="settings.html">Settings</a></li>
-    </ul>`;
+    </ul>
+    `; // Removed theme toggle button from here
 
+    // Removed theme toggle button selection and event listener
+    // Removed call to #loadTheme()
     // <li><a href="dynamic.html">Dynamic</a></li>
     return this.#container;
   }
+
+  // Removed #toggleTheme() method
+  // Removed #loadTheme() method
 }

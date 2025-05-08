@@ -468,3 +468,210 @@ a:hover {
   color: #5a00b3; /* Darker accent color for hover */
   text-decoration: underline;
 }
+
+/* Dark Theme Styles */
+body.dark-theme {
+  background-color: #242424;
+  color: #ffffff;
+}
+
+body.dark-theme .navbar {
+  background-color: #1e1e1e; /* Darker background for navbar */
+  border-bottom: 1px solid #333333;
+}
+
+body.dark-theme .navbar a {
+  color: #ffffff;
+}
+
+body.dark-theme .navbar a:hover {
+  color: #bb86fc; /* Light accent color for hover in dark mode */
+}
+
+body.dark-theme button,
+body.dark-theme .button {
+  background-color: #bb86fc; /* Accent color for buttons in dark mode */
+  color: #121212; /* Dark text for buttons in dark mode for contrast */
+}
+
+body.dark-theme button:hover,
+body.dark-theme .btn:hover {
+  background-color: #9e67e3;
+}
+
+body.dark-theme button:disabled {
+  background-color: #444444;
+  color: #777777;
+}
+
+body.dark-theme button:disabled:hover {
+  background-color: #444444;
+}
+
+body.dark-theme input[type="text"],
+body.dark-theme input[type="email"],
+body.dark-theme input[type="password"],
+body.dark-theme input[type="number"],
+body.dark-theme textarea,
+body.dark-theme select {
+  background-color: #333333;
+  color: #ffffff;
+  border: 1px solid #555555;
+}
+
+body.dark-theme input[type="text"]:focus,
+body.dark-theme input[type="email"]:focus,
+body.dark-theme input[type="password"]:focus,
+body.dark-theme input[type="number"]:focus,
+body.dark-theme textarea:focus,
+body.dark-theme select:focus {
+  border-color: #bb86fc;
+  box-shadow: 0 0 0 0.2rem rgba(187, 134, 252, 0.25);
+}
+
+body.dark-theme label {
+  color: #bbbbbb;
+}
+
+body.dark-theme .card {
+  background-color: #1e1e1e;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5,
+body.dark-theme h6 {
+  color: #eeeeee;
+}
+
+body.dark-theme a {
+  color: #bb86fc;
+}
+
+body.dark-theme a:hover {
+  color: #9e67e3;
+}
+
+body.dark-theme .login-container {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .select-label {
+    color: #eeeeee;
+}
+
+body.dark-theme .select-button {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #555555; /* Changed from border-bottom to border to ensure all sides are styled */
+}
+
+body.dark-theme .select-chevron {
+    color: #aaaaaa;
+}
+
+body.dark-theme .select-options {
+    background-color: #333333;
+    border: 1px solid #555555;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .select-option {
+    background-color: #333333;
+    color: #ffffff;
+    border-bottom: 1px solid #444444;
+}
+
+body.dark-theme .select-option:hover {
+    background-color: #444444;
+}
+
+body.dark-theme .select-option.selected {
+    color: #bb86fc; /* Accent color for selected option */
+}
+
+body.dark-theme .select-option.active {
+  background-color: #bb86fc;
+  color: #121212;
+}
+
+body.dark-theme .webcam-video {
+  background-color: #121212;
+}
+
+body.dark-theme .screen-dot {
+  background-color: #555;
+}
+
+body.dark-theme .screen-dot.active {
+  background-color: #bb86fc;
+}
+
+body.dark-theme .screen-title {
+  color: #eeeeee;
+}
+
+/* Ensure component-specific dark theme styles are also handled or overridden here if necessary */
+body.dark-theme .webcam-page-component header h1 {
+    color: #fff; /* Example: Make sure h1 in webcam page header is white in dark mode */
+}
+
+body.dark-theme .webcam-page-component .filter-search {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark-theme .webcam-page-component .error-message {
+    color: #ff7675; /* A light red for errors in dark mode */
+}
+
+body.dark-theme .webcam-page-component .select-button .select-value {
+    color: #fff;
+}
+
+body.dark-theme .webcam-page-component .images-row .captured-image {
+    border: 2px solid #444; /* Darker border for images in dark mode */
+}
+
+body.dark-theme .webcam-page-component #shareButton {
+    background-color: #bb86fc;
+    color: #121212;
+}
+
+body.dark-theme .webcam-page-component #shareButton:hover {
+    background-color: #9e67e3;
+}
+
+/* Dark theme for Webcam Page Component specific elements */
+body.dark-theme .webcam-left-panel,
+body.dark-theme .webcam-right-panel {
+  background-color: #1e1e1e; /* Dark background for panels */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+body.dark-theme .config-section,
+body.dark-theme .preview-section {
+  background-color: #242424; /* Slightly lighter dark for sections within panels */
+  border: 1px solid #333333;
+}
+
+body.dark-theme .webcam-video {
+  background-color: #000000; /* Ensure video background is black */
+  border: 1px solid #444444;
+}
+
+body.dark-theme .select-label {
+  color: #bbbbbb; /* Lighter label text */
+}
+
+body.dark-theme .filter-search {
+  background-color: #333333 !important; /* Override transparent */
+  color: #ffffff;
+  border: 1px solid #555555;
+}
