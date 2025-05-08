@@ -37,16 +37,18 @@ export class PhotoEditorComponent extends BaseComponent {
     this.#container.innerHTML = `
         <h1>Photo Editor</h1>
         <canvas id="editor" width="600" height="400"></canvas>
-        <div style="margin-top: 1rem;">
-          <label>Add a Caption:
-            <input type="text" id="captionInput" placeholder="Enter Caption" />
-            <input type="color" id="colorInput" value="#000000" />
-          </label>
-          <button id="addText">Add Text</button>
+        <div id="controlsPanel" class="controls-panel">
+          <div style="margin-top: 1rem;">
+            <label>Add a Caption:
+              <input type="text" id="captionInput" placeholder="Enter Caption" />
+              <input type="color" id="colorInput" value="#000000" />
+            </label>
+            <button id="addText">Add Text</button>
+          </div>
+          <button id="goBackToCamera">Go Back To Camera</button>
+          <button id="saveInDatabase">Save Photo to Database</button>
+          <button id="seeAndShare">See and Share Your Photos</button>
         </div>
-        <button id="goBackToCamera">Go Back To Camera</button>
-        <button id="saveInDatabase">Save Photo to Database</button>
-        <button id="seeAndShare">See and Share Your Photos</button>
     `;
   }
 
