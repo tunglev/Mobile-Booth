@@ -21,6 +21,11 @@ const UserPreference = sequelize.define("UserPreference", {
     allowNull: false,
     defaultValue: "1x4",
   },
+  frameColor: { // Added frameColor field
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: "#ffffff", // Default to white
+  },
 });
 
 class _SQLiteUserPreferenceModel {
@@ -45,6 +50,7 @@ class _SQLiteUserPreferenceModel {
       id: "userPreference",
       filter: "none",
       gridSize: "1x4",
+      frameColor: "#ffffff", // Added frameColor to default creation
     });
   }
 
