@@ -37,16 +37,26 @@ export class PhotoEditorComponent extends BaseComponent {
     this.#container.innerHTML = `
         <h1>Photo Editor</h1>
         <canvas id="editor" width="600" height="400"></canvas>
-        <div style="margin-top: 1rem;">
-          <label>Add a Caption:
-            <input type="text" id="captionInput" placeholder="Enter Caption" />
-            <input type="color" id="colorInput" value="#000000" />
-          </label>
-          <button id="addText">Add Text</button>
+        <div id="controlsPanel" class="controls-panel">
+          <div style="margin-top: 1rem;">
+            <label>Add a Caption:
+              <input type="text" id="captionInput" placeholder="Enter Caption" />
+              <input type="color" id="colorInput" value="#000000" />
+            </label>
+            <button id="addText">Add Text</button>
+          </div>
+          <div class="control-group">
+            <label for="brightness">Brightness:</label>
+            <input type="range" id="brightness" min="0" max="200" value="100" />
+          </div>
+          <div class="control-group">
+            <label for="contrast">Contrast:</label>
+            <input type="range" id="contrast" min="0" max="200" value="100" />
+          </div>
+          <button id="goBackToCamera">Go Back To Camera</button>
+          <button id="saveInDatabase">Save Photo to Database</button>
+          <button id="seeAndShare">See and Share Your Photos</button>
         </div>
-        <button id="goBackToCamera">Go Back To Camera</button>
-        <button id="saveInDatabase">Save Photo to Database</button>
-        <button id="seeAndShare">See and Share Your Photos</button>
     `;
   }
 
@@ -108,7 +118,55 @@ export class PhotoEditorComponent extends BaseComponent {
 
     this.#saveButton.addEventListener('click', () => {
       this.#savePhotoToDatabase();
-    })
+    });
+
+    this.#container.querySelector('#brightness').addEventListener('input', (event) => {
+      this.#applyCanvasFilters();
+    });
+
+    this.#container.querySelector('#contrast').addEventListener('input', (event) => {
+      this.#applyCanvasFilters();
+    });
+  }
+
+  #applyCanvasFilters() {
+    const brightness = this.#container.querySelector('#brightness').value;
+    const contrast = this.#container.querySelector('#contrast').value;
+    const ctx = this.#canvas.getContext('2d');
+
+    // It's important to redraw the original image before applying filters
+    // to prevent filters from compounding on each other on every input change.
+    this.#getMostRecentImage((record) => {
+      if (record && record.blob) {
+        const img = new Image();
+        img.onload = () => {
+          // Ensure canvas dimensions match the image
+          this.#canvas.width = img.width;
+          this.#canvas.height = img.height;
+          ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+          ctx.drawImage(img, 0, 0, this.#canvas.width, this.#canvas.height);
+          // Re-apply text if any
+          const text = this.#captionInput.value;
+          if (text) {
+            const color = this.#container.querySelector('#colorInput').value;
+            ctx.font = '24px sans-serif';
+            ctx.fillStyle = color;
+            const margin = 10;
+            // Important: reset filter before drawing text, or text will also be filtered
+            ctx.filter = 'none'; 
+            ctx.fillText(text, margin, this.#canvas.height - margin);
+          }
+        };
+        img.onerror = () => console.error("Error loading image for applying filters.");
+        img.src = URL.createObjectURL(record.blob);
+      } else {
+        // If there's no image, clear the canvas and potentially apply filters to a blank state (though less meaningful)
+        ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+        ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+        // You might want to draw something or leave it blank
+        ctx.filter = 'none'; // Reset filter
+      }
+    });
   }
 
   #initializeProperties() {
@@ -123,11 +181,10 @@ export class PhotoEditorComponent extends BaseComponent {
         const img = new Image();
         img.onload = () => {
           const ctx = this.#canvas.getContext('2d');
-          // Adjust canvas to the aspect ratio of the incoming image
           this.#canvas.width = img.width;
           this.#canvas.height = img.height;
-          ctx.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
-          ctx.drawImage(img, 0, 0, this.#canvas.width, this.#canvas.height);
+          // Apply initial/current filter values when image is first loaded
+          this.#applyCanvasFilters(); 
         };
         img.onerror = () => {
           console.error("Error loading image from blob.");

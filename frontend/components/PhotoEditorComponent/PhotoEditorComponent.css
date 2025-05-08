@@ -105,3 +105,172 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Styles for any text inputs or number inputs should follow global styles.css */
+
+/* Control Panel Styles */
+.controls-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    width: 300px; /* Or your desired width */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between control groups */
+
+    /* Light Theme Defaults (aligning with app's light theme) */
+    background-color: #f8f9fa; /* Consistent with .navbar, .login-container */
+    color: #212529; /* Default app text color */
+    border: 1px solid #e0e0e0; /* Consistent with .card border */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Consistent with .card shadow */
+}
+
+/* Styling for control groups within the panel */
+.controls-panel .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between label and input in a group */
+}
+
+.controls-panel .control-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Reset default margin if any */
+    /* Color is inherited from .controls-panel */
+}
+
+.controls-panel input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+    /* Basic styling for range inputs, can be enhanced */
+}
+
+/* Specific styling for range input thumbs and tracks might be needed for full cross-browser consistency and custom look */
+/* Example for Webkit browsers */
+.controls-panel input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #8400ff; /* Light theme accent */
+    cursor: pointer;
+}
+
+body.dark-theme .controls-panel input[type="range"]::-webkit-slider-thumb {
+    background: #bb86fc; /* Dark theme accent */
+}
+
+/* Example for Mozilla Firefox */
+.controls-panel input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #8400ff; /* Light theme accent */
+    cursor: pointer;
+    border: none;
+}
+
+body.dark-theme .controls-panel input[type="range"]::-moz-range-thumb {
+    background: #bb86fc; /* Dark theme accent */
+}
+
+.controls-panel label {
+    color: #495057; /* App's light theme label color */
+    font-size: 0.9rem;
+    margin-bottom: 2px; /* Small gap before input if stacked */
+}
+
+/* Container for label + input if needed for specific layout */
+.controls-panel div > label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between label text and input field */
+}
+
+.controls-panel input[type="text"],
+.controls-panel input[type="color"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    box-sizing: border-box;
+
+    /* Light Theme Input Defaults */
+    background-color: #ffffff; /* Slightly different from panel bg for contrast, or use #f8f9fa like global */
+    color: #212529; /* App's light theme text color */
+    border: 1px solid #ccc; /* App's light theme input border */
+}
+
+.controls-panel input[type="text"]:focus,
+.controls-panel input[type="color"]:focus {
+  border-color: #8400ff; /* App's light theme accent color for focus */
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(132, 0, 255, 0.25); /* App's light theme focus shadow */
+}
+
+.controls-panel input[type="color"] {
+    height: 40px; /* Specific height for color input */
+    padding: 5px; /* Adjust padding for color input type */
+}
+
+.controls-panel button {
+    display: block;
+    width: 100%;
+    padding: 10px 20px; /* Global button padding */
+    border-radius: 5px; /* Global button radius */
+    box-sizing: border-box;
+    font-size: 16px; /* Global button font size */
+    text-align: center; /* Global button text align */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    /* Light Theme Button Defaults */
+    background-color: #8400ff; /* App's light theme accent color */
+    color: #ffffff; /* App's light theme button text color */
+    border: none; /* Global button style */
+}
+
+.controls-panel button:hover {
+    background-color: #5a00b3; /* App's light theme accent hover color */
+}
+
+/* Dark Theme Overrides for Control Panel */
+body.dark-theme .controls-panel {
+    background-color: #1e1e1e; /* App's dark theme card/navbar background */
+    color: #ffffff; /* App's dark theme text color */
+    border: 1px solid #333333; /* App's dark theme card border */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Existing shadow, or align with dark theme card shadow */
+}
+
+body.dark-theme .controls-panel label {
+    color: #bbbbbb; /* App's dark theme label color */
+}
+
+body.dark-theme .controls-panel input[type="text"],
+body.dark-theme .controls-panel input[type="color"] {
+    background-color: #333333; /* App's dark theme input background */
+    color: #ffffff; /* App's dark theme input text color */
+    border: 1px solid #555555; /* App's dark theme input border */
+}
+
+body.dark-theme .controls-panel input[type="text"]:focus,
+body.dark-theme .controls-panel input[type="color"]:focus {
+  border-color: #bb86fc; /* App's dark theme accent color for focus */
+  box-shadow: 0 0 0 0.2rem rgba(187, 134, 252, 0.25); /* App's dark theme focus shadow */
+}
+
+/* Add focus styles for range inputs if desired, though they are often browser-styled */
+/* body.dark-theme .controls-panel input[type="range"]:focus {
+    Example: outline: 2px solid #bb86fc; 
+} */
+
+body.dark-theme .controls-panel button {
+    background-color: #bb86fc; /* App's dark theme accent color */
+    color: #121212; /* App's dark theme button text for contrast */
+    border: none;
+}
+
+body.dark-theme .controls-panel button:hover {
+    background-color: #9e67e3; /* App's dark theme accent hover color */
+}
