@@ -6,8 +6,7 @@ const photosRoutes = require('./routes/photos');
 const feedbackRoutes = require('./routes/feedback');
 
 const settingsRoutes = require('./routes/settings');
-const userPreferenceRoutes = require('./routes/userPreference'); // Import user preference routes
-
+const userPreferenceRoutes = require('./routes/userPreference');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

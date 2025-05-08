@@ -1,50 +1,38 @@
-const fs = require('fs');
-const path = require('path');
+const SQLiteSettingsModel = require('../model/SQLiteSettingsModel');
 
-const settingsFilePath = path.join(__dirname, '../mockDB/settings.json');
-
-// Helper function to read settings.json
-const readSettings = () => {
-    try {
-        if (!fs.existsSync(settingsFilePath)) {
-            writeSettings({ username: '', theme: 'light', language: 'en' });
-        }
-        const data = fs.readFileSync(settingsFilePath, 'utf8');
-        return data ? JSON.parse(data) : {};
-    } catch (error) {
-        console.error('Error reading settings.json:', error);
-        return {};
-    }
-};
-
-// Helper function to write to settings.json
-const writeSettings = (settings) => {
-    try {
-        fs.writeFileSync(settingsFilePath, JSON.stringify(settings, null, 2), 'utf8');
-    } catch (error) {
-        console.error('Error writing to settings.json:', error);
-    }
-};
+// Initialize the SQLiteSettingsModel
+SQLiteSettingsModel.init();
 
 // Get all settings
-exports.getSettings = (req, res) => {
-    const settings = readSettings();
-    res.status(200).json(settings);
+exports.getSettings = async (req, res) => {
+    try {
+        const settings = await SQLiteSettingsModel.read();
+        res.status(200).json(settings);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+        res.status(500).json({ message: 'Failed to fetch settings' });
+    }
 };
 
 // Create initial settings
-exports.createSettings = (req, res) => {
+exports.createSettings = async (req, res) => {
     const { username, theme = 'light', language = 'en' } = req.body;
     const settings = { username, theme, language };
 
-    writeSettings(settings);
-    res.status(201).json({
-        message: 'Settings created successfully',
-        settings,
-    });
+    try {
+        await SQLiteSettingsModel.update(settings);
+        res.status(201).json({
+            message: 'Settings created successfully',
+            settings,
+        });
+    } catch (error) {
+        console.error('Error creating settings:', error);
+        res.status(500).json({ message: 'Failed to create settings' });
+    }
 };
 
-exports.updateAllSettings = (req, res) => {
+// Update all settings
+exports.updateAllSettings = async (req, res) => {
     const { username, theme, language } = req.body;
 
     // Validate input
@@ -55,10 +43,10 @@ exports.updateAllSettings = (req, res) => {
     const settings = { username, theme, language };
 
     try {
-        writeSettings(settings); // Save settings to file
+        const updatedSettings = await SQLiteSettingsModel.update(settings);
         res.status(200).json({
             message: 'Settings updated successfully',
-            settings,
+            settings: updatedSettings,
         });
     } catch (error) {
         console.error('Error updating settings:', error);
