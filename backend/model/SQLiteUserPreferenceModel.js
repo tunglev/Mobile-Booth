@@ -9,7 +9,7 @@ const UserPreference = sequelize.define("UserPreference", {
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
-    defaultValue: "userPreference", // Since we only have one set of preferences
+    defaultValue: "userPreference", 
   },
   filter: {
     type: DataTypes.STRING,
