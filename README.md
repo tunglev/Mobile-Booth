@@ -27,6 +27,10 @@ https://docs.google.com/presentation/d/1GZth7Kz0RguV5insxW_mbFpK-kVpYjB2K2_SoKhZ
 
 https://docs.google.com/presentation/d/1XQnVO3VHVI8f4AiaImCHIrJd9O0pT8Jtk4PDwO47KIU/edit?usp=sharing
 
+## Milestone 7 Slide Deck
+
+https://docs.google.com/presentation/d/1Q2NtpE6banV6BzX5xynAEx_c7nk_AV23Q0Dku3xN8h4/edit?usp=sharing
+
 ## 🧑‍💻 Team Members
 
 ### Jack Hudson
