@@ -3,24 +3,23 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
+    background-color: #ffffff; /* Changed to white */
+    border-bottom: 1px solid #eeeeee; /* Lighter border */
     width: 100%;
 }
   
 .navbar a {
     text-decoration: none;
-    color: #333;
+    color: #212529; /* Darker text color */
     font-weight: 500;
     transition: color 0.3s ease;
 }
   
 .navbar a:hover {
-    color: #007bff;
+    color: #8400ff; /* Accent color for hover */
 }
   
 #menu {
     display: flex;
     gap: 1.5rem;
 }
-  

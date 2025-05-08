@@ -7,8 +7,12 @@ html {
 }
 
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font stack */
   margin: 0;
   padding: 0;
+  background-color: #ffffff; /* White background */
+  color: #212529; /* Dark text */
+  line-height: 1.6;
 }
 
 h1 {
@@ -23,19 +27,22 @@ ul, li {
 }
 
 button, .button {
-  background-color: #007bff;
+  background-color: #8400ff; /* Accent color for buttons */
   color: #ffffff;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
   cursor: pointer;
+  border-radius: 5px; /* Rounded corners for buttons */
   transition: background-color 0.3s ease;
-  user-select: none;
 }
 
-button:hover {
-  background-color: #0056b3;
+button:hover, .btn:hover {
+  background-color: #5a00b3; /* Darker accent color for hover */
 }
 
 button:disabled {
@@ -382,4 +389,82 @@ button:disabled:hover {
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
-} 
+}
+
+/* Utility classes */
+.text-accent {
+  color: #8400ff;
+}
+
+.bg-accent {
+  background-color: #8400ff;
+}
+
+/* Add more global styles as needed to ensure consistency */
+
+/* Styles for form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc; /* Light grey border */
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #f8f9fa; /* Very light grey background for inputs */
+  color: #212529; /* Dark text */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #8400ff; /* Accent color for focus */
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(132, 0, 255, 0.25); /* Subtle focus shadow */
+}
+
+label {
+  color: #495057; /* Slightly lighter text for labels */
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* Minimalist card style */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0; /* Lighter border for cards */
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  padding: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #343a40; /* Slightly lighter dark color for headings */
+  margin-bottom: 0.5rem;
+}
+
+a {
+  color: #8400ff; /* Accent color for links */
+  text-decoration: none;
+}
+
+a:hover {
+  color: #5a00b3; /* Darker accent color for hover */
+  text-decoration: underline;
+}

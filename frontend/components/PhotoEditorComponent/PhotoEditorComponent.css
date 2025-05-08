@@ -1,0 +1,107 @@
+.photo-editor-container {
+    max-width: 800px; /* Adjusted for potentially larger content */
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.photo-editor-container h2 {
+    text-align: center;
+    color: #343a40;
+    margin-bottom: 1.5rem;
+}
+
+.image-display-area {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.image-display-area img {
+    max-width: 100%;
+    max-height: 60vh;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    background-color: #f8f9fa; /* Placeholder background */
+}
+
+.editor-controls {
+    display: flex;
+    flex-direction: column; /* Stack controls vertically */
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.control-group label {
+    color: #495057;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.control-group input[type="range"],
+.control-group select {
+    width: 100%;
+    padding: 0.5rem; /* Adjusted padding for these elements */
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.editor-actions {
+    display: flex;
+    justify-content: space-between; /* Align buttons */
+    gap: 1rem;
+}
+
+.editor-actions button {
+    flex-grow: 1; /* Allow buttons to share space */
+    padding: 0.75rem;
+    /* Button styling is largely covered by global styles.css */
+}
+
+/* Ensure specific editor elements are minimalist and clean */
+/* Example: if there were sliders or specific UI elements */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: #dee2e6;
+    border-radius: 4px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #8400ff;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #ffffff; /* White border around thumb */
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px; /* Adjusted for consistency */
+    height: 18px;
+    background: #8400ff;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+}
+
+/* Styles for any text inputs or number inputs should follow global styles.css */
