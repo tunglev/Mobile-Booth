@@ -117,13 +117,62 @@ input[type="range"]::-moz-range-thumb {
     width: 300px; /* Or your desired width */
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 15px; /* Space between control groups */
 
     /* Light Theme Defaults (aligning with app's light theme) */
     background-color: #f8f9fa; /* Consistent with .navbar, .login-container */
     color: #212529; /* Default app text color */
     border: 1px solid #e0e0e0; /* Consistent with .card border */
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Consistent with .card shadow */
+}
+
+/* Styling for control groups within the panel */
+.controls-panel .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between label and input in a group */
+}
+
+.controls-panel .control-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Reset default margin if any */
+    /* Color is inherited from .controls-panel */
+}
+
+.controls-panel input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+    /* Basic styling for range inputs, can be enhanced */
+}
+
+/* Specific styling for range input thumbs and tracks might be needed for full cross-browser consistency and custom look */
+/* Example for Webkit browsers */
+.controls-panel input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #8400ff; /* Light theme accent */
+    cursor: pointer;
+}
+
+body.dark-theme .controls-panel input[type="range"]::-webkit-slider-thumb {
+    background: #bb86fc; /* Dark theme accent */
+}
+
+/* Example for Mozilla Firefox */
+.controls-panel input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #8400ff; /* Light theme accent */
+    cursor: pointer;
+    border: none;
+}
+
+body.dark-theme .controls-panel input[type="range"]::-moz-range-thumb {
+    background: #bb86fc; /* Dark theme accent */
 }
 
 .controls-panel label {
@@ -210,6 +259,11 @@ body.dark-theme .controls-panel input[type="color"]:focus {
   border-color: #bb86fc; /* App's dark theme accent color for focus */
   box-shadow: 0 0 0 0.2rem rgba(187, 134, 252, 0.25); /* App's dark theme focus shadow */
 }
+
+/* Add focus styles for range inputs if desired, though they are often browser-styled */
+/* body.dark-theme .controls-panel input[type="range"]:focus {
+    Example: outline: 2px solid #bb86fc; 
+} */
 
 body.dark-theme .controls-panel button {
     background-color: #bb86fc; /* App's dark theme accent color */
