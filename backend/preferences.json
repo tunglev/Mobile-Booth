@@ -1,4 +1,4 @@
 {
-  "filter": "invert",
-  "gridSize": "2x2"
+  "filter": "none",
+  "gridSize": "1x4"
 }

@@ -38,7 +38,8 @@ export class WebcamPageComponent extends BaseComponent {
         }
 
 		// Create the main container
-		this.#container = document.createElement('webcam-page');
+		this.#container = document.createElement('div'); // Changed from 'webcam-page' to 'div' for more general use
+		this.#container.classList.add('webcam-page-component'); // Added a class for styling
 
 		// Render the task text
 
@@ -46,66 +47,69 @@ export class WebcamPageComponent extends BaseComponent {
         <header>
             <h1>Mobile Booth</h1>
         </header>
-        <main>
+        <main class="webcam-page-main">
             <div id="countdown-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); color: white; font-size: 10em; display: flex; justify-content: center; align-items: center; z-index: 1000; display: none;">3</div>
-            <section class="webcam-section">
-            <div class="webcam-container">
-                <video id="webcam-video" class="webcam-video" autoplay playsinline></video>
-                
-                <div class="filter-container">
-                <div class="select-container">
-                    <label class="select-label">Filter</label>
-                    <div class="search-container">
-                        <input type="text" id="filter-search" class="filter-search" placeholder="Search filters..." />
-                        <span class="error-message" id="search-error"></span>
-                    </div>
-                    <div class="select-button" id="filter-select">
-                    <span class="select-value">No Filter</span>
-                    <span class="select-chevron">▼</span>
-                    </div>
-                    <div class="select-options" id="filter-options">
-                    <div class="select-option selected" data-value="none">No Filter</div>
-                    <div class="select-option filter-option" data-value="grayscale">Grayscale</div>
-                    <div class="select-option filter-option" data-value="sepia">Sepia</div>
-                    <div class="select-option filter-option" data-value="invert">Invert</div>
-                    <div class="select-option filter-option" data-value="blur">Blur</div>
-                    <div class="select-option filter-option" data-value="brightness">Brightness</div>
-                    </div>
+            <div class="webcam-layout-container">
+                <div class="webcam-left-panel">
+                    <video id="webcam-video" class="webcam-video" autoplay playsinline></video>
                 </div>
-                </div>
-                
-                <div class="grid-container">
-                <div class="select-container">
-                    <label class="select-label">Grid Layout</label>
-                    <div class="select-button" id="grid-select">
-                    <span class="select-value">1x4 (Row)</span>
-                    <span class="select-chevron">▼</span>
+                <div class="webcam-right-panel">
+                    <div class="controls-and-previews">
+                        <section class="config-section">
+                            <div class="filter-container">
+                                <div class="select-container">
+                                    <label class="select-label">Filter</label>
+                                    <div class="search-container">
+                                        <input type="text" id="filter-search" class="filter-search" placeholder="Search filters..." />
+                                        <span class="error-message" id="search-error"></span>
+                                    </div>
+                                    <div class="select-button" id="filter-select">
+                                        <span class="select-value">No Filter</span>
+                                        <span class="select-chevron">▼</span>
+                                    </div>
+                                    <div class="select-options" id="filter-options">
+                                        <div class="select-option selected" data-value="none">No Filter</div>
+                                        <div class="select-option filter-option" data-value="grayscale">Grayscale</div>
+                                        <div class="select-option filter-option" data-value="sepia">Sepia</div>
+                                        <div class="select-option filter-option" data-value="invert">Invert</div>
+                                        <div class="select-option filter-option" data-value="blur">Blur</div>
+                                        <div class="select-option filter-option" data-value="brightness">Brightness</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-container">
+                                <div class="select-container">
+                                    <label class="select-label">Grid Layout</label>
+                                    <div class="select-button" id="grid-select">
+                                        <span class="select-value">1x4 (Row)</span>
+                                        <span class="select-chevron">▼</span>
+                                    </div>
+                                    <div class="select-options" id="grid-options">
+                                        <div class="select-option selected" data-value="1x4">1x4 (Row)</div>
+                                        <div class="select-option" data-value="2x2">2x2 (Grid)</div>
+                                        <div class="select-option" data-value="4x1">4x1 (Column)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="webcam-controls">
+                                <button id="startWebcam">Start Camera</button>
+                                <button id="captureImage" disabled>Start capturing</button>
+                                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
+                            </div>
+                        </section>
+                        <section class="preview-section">
+                            <div class="image-preview" id="image-preview">
+                                <div class="images-row layout-1x4" id="images-row">
+                                    <img class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
+                                </div>
+                                <button id="shareButton">
+                                    🌐 Share
+                                </button>
+                            </div>
+                        </section>
                     </div>
-                    <div class="select-options" id="grid-options">
-                    <div class="select-option selected" data-value="1x4">1x4 (Row)</div>
-                    <div class="select-option" data-value="2x2">2x2 (Grid)</div>
-                    <div class="select-option" data-value="4x1">4x1 (Column)</div>
-                    </div>
-                </div>
-                </div>
-                
-                <div class="webcam-controls">
-                <button id="startWebcam">Start Camera</button>
-                <button id="captureImage" disabled>Start capturing</button>
-                <button id="toggleVideoMode">Toggle Video Mode</button>
-                <button id="finalizePhoto" disabled style="text-decoration: none;">Finalize and Edit Photo</button>
-                </div>
-                
-                <div class="image-preview" id="image-preview">
-                    <div class="images-row layout-1x4" id="images-row">
-                        <img class="captured-image" src="assets/placeholder.jpeg" style="user-select: none;">
-                    </div>
-                    <button id="shareButton">
-                        🌐 Share
-                    </button>
                 </div>
             </div>
-            </section>
         </main>
         `;
 		this.#initializeProperties();
@@ -235,7 +239,7 @@ export class WebcamPageComponent extends BaseComponent {
 	}
 
 	#addOptionsEventListeners() {
-		const options = this.#container.querySelectorAll('.filter-option');
+		const options = this.#container.querySelectorAll('#filter-options .select-option'); // Changed selector to include all .select-option elements within #filter-options
 		options.forEach((option) => {
 			option.addEventListener('click', (event) => { // Add event parameter
 				event.preventDefault(); // Prevent default action
