@@ -12,11 +12,13 @@ export class WebcamPageComponent extends BaseComponent {
 	#gridSelect = null;
 	#gridOptions = null;
 	#countdownOverlay = null; // Added for countdown display
+	#frameColorInput = null; // Added for frame color selection
 
 	#stream = null;
 	#isActive = false;
 	#currentFilter = 'none';
 	#currentGridLayout = '1x4'; // Default grid layout
+	#currentFrameColor = 'white'; // Default frame color
 	#dbprefs = null; // Keep for potential other uses or future refactor, but logic will bypass it for filter/grid
 	#dbimages = null;
 	#capturedImages = []; // Array to store captured images
@@ -95,6 +97,10 @@ export class WebcamPageComponent extends BaseComponent {
                                         <div class="select-option" data-value="4x1">4x1 (Column)</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="frame-color-container">
+                                <label for="frame-color-picker" class="select-label">Frame Color</label>
+                                <input type="color" id="frame-color-picker" value="${this.#currentFrameColor}">
                             </div>
                             <div class="webcam-controls">
                                 <button id="startWebcam">Start Camera</button>
@@ -231,11 +237,13 @@ export class WebcamPageComponent extends BaseComponent {
 		this.#gridSelect = this.#container.querySelector('#grid-select');
 		this.#gridOptions = this.#container.querySelector('#grid-options');
 		this.#countdownOverlay = this.#container.querySelector('#countdown-overlay'); // Initialize countdown overlay
+		this.#frameColorInput = this.#container.querySelector('#frame-color-picker'); // Initialize frame color input
 
 		this.#startButton.addEventListener('click', () => this.#toggleWebcam());
 		this.#captureButton.addEventListener('click', () => this.#startCapturing());
 		this.#filterSelect.addEventListener('click', () => this.#toggleFilterOptions());
 		this.#gridSelect.addEventListener('click', () => this.#toggleGridOptions());
+		this.#frameColorInput.addEventListener('input', (event) => this.#handleFrameColorChange(event));
 		window.addEventListener('beforeunload', () => {
 			if (this.#stream) {
 				this.#stream.getTracks().forEach((track) => track.stop());
@@ -291,6 +299,11 @@ export class WebcamPageComponent extends BaseComponent {
 				this.#gridSelect.classList.remove('active');
 			});
 		});
+	}
+
+	#handleFrameColorChange(event) {
+		this.#currentFrameColor = event.target.value;
+		this.#updatePreferencesOnServer({ frameColor: this.#currentFrameColor });
 	}
 
 	async #toggleWebcam() {
@@ -658,6 +671,12 @@ export class WebcamPageComponent extends BaseComponent {
 				if (prefs.gridSize) {
 					this.#applyGridLayout(prefs.gridSize);
 				}
+				if (prefs.frameColor) {
+					this.#currentFrameColor = prefs.frameColor;
+					if (this.#frameColorInput) {
+						this.#frameColorInput.value = prefs.frameColor;
+					}
+				}
 			}, 100); // Small delay might be needed
 
 		} catch (error) {
@@ -666,6 +685,9 @@ export class WebcamPageComponent extends BaseComponent {
 			setTimeout(() => {
 				this.#applyFilter(this.#currentFilter); // Apply default filter
 				this.#applyGridLayout(this.#currentGridLayout); // Apply default grid layout
+				if (this.#frameColorInput) { // Ensure input exists before setting
+					this.#frameColorInput.value = this.#currentFrameColor; // Apply default frame color
+				}
 			}, 100);
 		}
 	}
@@ -694,6 +716,9 @@ export class WebcamPageComponent extends BaseComponent {
 			if (prefsToUpdate.gridSize !== undefined) {
 				this.#currentGridLayout = prefsToUpdate.gridSize;
 			}
+			if (prefsToUpdate.frameColor !== undefined) {
+				this.#currentFrameColor = prefsToUpdate.frameColor;
+			}
 
 		} catch (error) {
 			console.error('Error updating preferences on server:', error);
@@ -720,8 +745,8 @@ export class WebcamPageComponent extends BaseComponent {
 			return;
 		}
 
-		const frameThickness = 20; // Corrected back to 20px
-		const gapSize = 10;       // Gap between images, halved from 20px
+		const frameThickness = 40;
+		const gapSize = 10;       
 
 		let numCols, numRows;
 		const numImages = this.#maxRecentImages;
@@ -760,7 +785,7 @@ export class WebcamPageComponent extends BaseComponent {
 		combinedCanvas.height = numRows * cellHeight + (numRows > 1 ? (numRows - 1) * gapSize : 0);
 
 		// Fill canvas with white (for frames and gaps)
-		ctx.fillStyle = 'white';
+		ctx.fillStyle = this.#currentFrameColor;
 		ctx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
 
 

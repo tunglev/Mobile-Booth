@@ -1,4 +1,5 @@
 {
   "filter": "none",
-  "gridSize": "2x2"
+  "gridSize": "2x2",
+  "frameColor": "#ffffff"
 }

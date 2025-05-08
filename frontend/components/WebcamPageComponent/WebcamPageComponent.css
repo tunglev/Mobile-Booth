@@ -280,3 +280,34 @@
         max-height: 50vh; /* Adjust video height for smaller screens */
     }
 }
+
+.frame-color-container {
+    margin-bottom: 15px; /* Spacing below the frame color picker */
+}
+
+.frame-color-container label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555; /* Dark grey label text */
+    font-size: 0.9em;
+}
+
+.frame-color-container input[type="color"] {
+    width: 100%; /* Full width */
+    height: 40px; /* Standard height */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 5px; /* Padding inside the color picker */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    cursor: pointer;
+}
+
+/* Style for the color picker's swatch (browser-dependent) */
+.frame-color-container input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.frame-color-container input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 3px;
+}

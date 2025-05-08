@@ -17,7 +17,7 @@ exports.updatePreferences = async (req, res) => {
 	try {
 		await SQLiteUserPreferenceModel.init();
 		let currentPreferences = await SQLiteUserPreferenceModel.read();
-		const { filter, gridSize } = req.body;
+		const { filter, gridSize, frameColor } = req.body; // Added frameColor
 
 		const newPreferences = {};
 		let updated = false;
@@ -28,6 +28,10 @@ exports.updatePreferences = async (req, res) => {
 		}
 		if (gridSize !== undefined && currentPreferences.gridSize !== gridSize) {
 			newPreferences.gridSize = gridSize;
+			updated = true;
+		}
+		if (frameColor !== undefined && currentPreferences.frameColor !== frameColor) { // Added frameColor logic
+			newPreferences.frameColor = frameColor;
 			updated = true;
 		}
 
