@@ -568,7 +568,7 @@ body.dark-theme .select-label {
 body.dark-theme .select-button {
     background-color: #333333;
     color: #ffffff;
-    border-bottom: 1px solid #555555;
+    border: 1px solid #555555; /* Changed from border-bottom to border to ensure all sides are styled */
 }
 
 body.dark-theme .select-chevron {
