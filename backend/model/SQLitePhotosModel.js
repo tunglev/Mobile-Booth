@@ -1,6 +1,5 @@
-import { DataTypes, Sequelize } from "sequelize";
-// import betterSqlite3 from 'better-sqlite3';
-
+const { DataTypes, Sequelize } = require("sequelize");
+// const betterSqlite3 = require('better-sqlite3');
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -24,7 +23,6 @@ const Photo = sequelize.define("Photo", {
   },
   // maybe add more?
 })
-
 
 class _SQLitePhotoModel {
   constructor() {}
@@ -85,4 +83,4 @@ class _SQLitePhotoModel {
 
 const SQLitePhotoModel = new _SQLitePhotoModel();
 
-export default SQLitePhotoModel;
+module.exports = SQLitePhotoModel;

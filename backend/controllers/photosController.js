@@ -1,5 +1,5 @@
-import { existsSync, writeFile, readFileSync, writeFileSync } from 'fs';
-import SQLitePhotoModel from '../model/SQLitePhotosModel.js';
+const { existsSync, writeFile, readFileSync, writeFileSync } = require('fs');
+const SQLitePhotoModel = require('../model/SQLitePhotosModel.js');
 
 const photoDataFilePath = "photoData.json";
 createJSONifNotExists();
@@ -23,19 +23,19 @@ function writeData(data) {
     return writeFileSync(photoDataFilePath, JSON.stringify(data, null, 2));
 }
 
-export async function getAllPhotos(req, res) {
+async function getAllPhotos(req, res) {
     await SQLitePhotoModel.init();
     console.log("Getting all photos from sql.");
     const allPhotos = await SQLitePhotoModel.read();
     // console.log("All photos:", allPhotos);
     res.json(allPhotos);
 }
-export async function getPhotoById(req, res) {
+async function getPhotoById(req, res) {
     await SQLitePhotoModel.init();
     console.log(`Getting photo with id ${req.params.id} from sql.`);
     res.json(SQLitePhotoModel.read(req.params.id));
 }
-export async function addPhoto(req, res) {
+async function addPhoto(req, res) {
     await SQLitePhotoModel.init();
     console.log("Starting add photo");
     // id will be handled by the sql itself, since the default id is a random uuid
@@ -61,19 +61,19 @@ export async function addPhoto(req, res) {
     // }
 }
 
-export async function deletePhoto(req, res) {
+async function deletePhoto(req, res) {
     await SQLitePhotoModel.init();
     console.log("Starting delete photo");
     SQLitePhotoModel.deleteById(req.params.id);
     res.status(204).send();
 }
 
-export function getAllPhotosJSON(req, res) {
+function getAllPhotosJSON(req, res) {
     console.log("Got all photos.");
     res.json(readData());
 }
 
-export function getPhotoByIdJSON(req, res) {
+function getPhotoByIdJSON(req, res) {
     const photos = readData();
     const photo = photos.find(i => i.id == req.params.id);
     if (photo) {
@@ -86,7 +86,7 @@ export function getPhotoByIdJSON(req, res) {
     }
 }
 
-export function addPhotoJSON(req, res) {
+function addPhotoJSON(req, res) {
     console.log("Starting add photo.");
     const photos = readData();
     const newPhoto = { id: Date.now(), ...req.body };
@@ -96,7 +96,7 @@ export function addPhotoJSON(req, res) {
     console.log("Added photo.");
 }
   
-export function deletePhotoJSON(req, res) {
+function deletePhotoJSON(req, res) {
     let photos = readData();
     const newPhotos = photos.filter(i => i.id != req.params.id);
     if (newPhotos.length === photos.length) {
@@ -107,3 +107,14 @@ export function deletePhotoJSON(req, res) {
     writeData(newPhotos);
     res.status(204).send();
 }
+
+module.exports = {
+    getAllPhotos,
+    getPhotoById,
+    addPhoto,
+    deletePhoto,
+    getAllPhotosJSON,
+    getPhotoByIdJSON,
+    addPhotoJSON,
+    deletePhotoJSON
+};
